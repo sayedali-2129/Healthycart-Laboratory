@@ -1,10 +1,11 @@
 import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy_cart_laboratory/core/custom/toast/toast.dart';
 import 'package:healthy_cart_laboratory/core/services/easy_navigation.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/domain/i_location_facde.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/domain/model/location_model.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/domain/i_location_facde.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/domain/model/location_model.dart';
 import 'package:healthy_cart_laboratory/features/pending_page/presentation/pending_page.dart';
 import 'package:healthy_cart_laboratory/features/splash_screen/splash_screen.dart';
 import 'package:injectable/injectable.dart';
@@ -12,6 +13,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class LocationProvider extends ChangeNotifier {
   LocationProvider(this.iLocationFacade);
+  bool locationGetLoading = false;
   final ILocationFacade iLocationFacade;
   PlaceMark? selectedPlaceMark;
   final searchController = TextEditingController();
@@ -19,8 +21,14 @@ class LocationProvider extends ChangeNotifier {
   List<PlaceMark> searchResults = [];
   bool searchLoading = false;
   String? userId = FirebaseAuth.instance.currentUser?.uid;
-  Future<void> getLocationPermisson() async {
+
+  Future<bool> getLocationPermisson() async {
+    locationGetLoading = true;
+    notifyListeners();
     await iLocationFacade.getLocationPermisson();
+    locationGetLoading = false;
+    notifyListeners();
+    return true;
   }
 
   Future<void> getCurrentLocationAddress() async {
@@ -53,13 +61,13 @@ class LocationProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> setLocationByHospital(
+  Future<void> setLocationByLaboratory(
       {required BuildContext context,
-      required bool isHospitaEditProfile,
-      required int? hospitalModelrequestedCount}) async {
+      required bool isLaboratoryEditProfile,
+      required int? labRequestedCount}) async {
     log('Location selected::::$selectedPlaceMark');
     final result =
-        await iLocationFacade.setLocationByHospital(selectedPlaceMark!);
+        await iLocationFacade.setLocationByLaboratory(selectedPlaceMark!);
     result.fold((failure) {
       CustomToast.errorToast(text: failure.errMsg);
     }, (sucess) async {
@@ -73,13 +81,13 @@ class LocationProvider extends ChangeNotifier {
       }, (sucess) {
         Navigator.pop(context);
         CustomToast.sucessToast(text: 'Location added sucessfully');
-        (isHospitaEditProfile)
+        (isLaboratoryEditProfile)
             ? Navigator.pop(
                 context,
               )
-            : EasyNavigation.pushReplacement(
+            : EasyNavigation.pushAndRemoveUntil(
                 context: context,
-                page: (hospitalModelrequestedCount == 2)
+                page: (labRequestedCount == 2)
                     ? const SplashScreen()
                     : const PendingPageScreen());
         notifyListeners();

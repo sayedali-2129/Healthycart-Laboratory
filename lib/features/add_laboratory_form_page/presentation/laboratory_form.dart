@@ -15,14 +15,14 @@ import 'package:healthy_cart_laboratory/features/add_laboratory_form_page/presen
 import 'package:healthy_cart_laboratory/features/add_laboratory_form_page/presentation/widgets/pdf_shower_widget.dart';
 import 'package:healthy_cart_laboratory/features/add_laboratory_form_page/presentation/widgets/text_above_form_widdget.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/application/authenication_provider.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/application/location_provider.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/domain/model/location_model.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/presentation/location_search.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/application/location_provider.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/domain/model/location_model.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/presentation/location_search.dart';
 import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:provider/provider.dart';
 
-class HospitalFormScreen extends StatelessWidget {
-  const HospitalFormScreen(
+class LaboratoryFormScreen extends StatelessWidget {
+  const LaboratoryFormScreen(
       {super.key, this.phoneNo, this.laboratoryModel, this.placeMark});
   final LaboratoryModel? laboratoryModel;
   final String? phoneNo;
@@ -82,17 +82,21 @@ class HospitalFormScreen extends StatelessWidget {
                                             onTap: () {
                                               context
                                                   .read<LocationProvider>()
-                                                  .getLocationPermisson();
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const UserLocationSearchWidget(
-                                                        isHospitaEditProfile:
-                                                            true),
-                                              ));
+                                                  .getLocationPermisson()
+                                                  .then(
+                                                (value) {
+                                                  Navigator.of(context)
+                                                      .push(MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const UserLocationSearchWidget(
+                                                            isHospitaEditProfile:
+                                                                true),
+                                                  ));
+                                                },
+                                              );
                                             },
                                             child: Text(
-                                              "${authProvider.hospitalDataFetched?.placemark?.localArea},${authProvider.hospitalDataFetched?.placemark?.district},${authProvider.hospitalDataFetched?.placemark?.state}",
+                                              "${authProvider.labFetchlDataFetched?.placemark?.localArea},${authProvider.labFetchlDataFetched?.placemark?.district},${authProvider.labFetchlDataFetched?.placemark?.state}",
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                   fontSize: 14,

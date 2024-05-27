@@ -10,7 +10,7 @@ class CustomCurveAppBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       pinned: true,
-      toolbarHeight: 100,
+      toolbarHeight: 110,
       backgroundColor: BColors.mainlightColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(

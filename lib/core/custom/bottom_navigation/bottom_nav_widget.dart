@@ -33,7 +33,7 @@ class _BottonNavTabState extends State<BottomNavigationWidget> {
       child: Scaffold(
         body: TabBarView(
             clipBehavior: Clip.antiAlias,
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             children: widget.tabItems),
         bottomNavigationBar: PhysicalModel(
           color: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:healthy_cart_laboratory/core/custom/confirm_alertbox/confirm_delete_widget.dart';
+import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:popover/popover.dart';
 
 //list of edit and delete of popover
@@ -80,31 +81,28 @@ class PopOverEditDelete extends StatelessWidget {
   final Color? iconColor;
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          showPopover(
-              context: context,
-              bodyBuilder: (context) => ListItems(
-                    editButton: () {
-                      Navigator.pop(context);
-                      editButton.call();
-                    },
-                    deleteButton: () {
-                      Navigator.pop(context);
-                      deleteButton.call();
-                    },
-                  ),
-              direction: PopoverDirection.bottom,
-              radius: 12,
-              width: 160,
-              height: 144,
-              arrowHeight: 15,
-              arrowWidth: 30,
-              backgroundColor: const Color(0xFF11334E));
-        },
-        icon: Icon(
-          Icons.more_vert,
-          color: iconColor,
-        ));
+    return GestureDetector(
+      onTap: () {
+        showPopover(
+            context: context,
+            bodyBuilder: (context) => ListItems(
+                  editButton: () {
+                    Navigator.pop(context);
+                    editButton.call();
+                  },
+                  deleteButton: () {
+                    Navigator.pop(context);
+                    deleteButton.call();
+                  },
+                ),
+            direction: PopoverDirection.bottom,
+            radius: 12,
+            width: 160,
+            height: 144,
+            arrowHeight: 15,
+            arrowWidth: 30,
+            backgroundColor: const Color(0xFF11334E));
+      },
+    );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_cart_laboratory/core/custom/bottom_navigation/bottom_nav_widget.dart';
-import 'package:healthy_cart_laboratory/features/hospital_profile/presentation/profile_page.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/request_page.dart';
 import 'package:healthy_cart_laboratory/features/laboratory_banner/presentation/banner_page.dart';
+import 'package:healthy_cart_laboratory/features/laboratory_profile/presentation/profile_page.dart';
 import 'package:healthy_cart_laboratory/features/tests_screen/presentation/tests_screen.dart';
 import 'package:healthy_cart_laboratory/utils/constants/image/icon.dart';
 
@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         RequestScreen(),
         TestsScreen(),
         BannerScreen(),
-        ProfilePage(),
+        ProfileScreen(),
       ],
       selectedImage: Image.asset(
         BIcon.testsColor,

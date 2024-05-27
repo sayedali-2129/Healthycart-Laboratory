@@ -16,18 +16,41 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
+  // @override
+  // void initState() {
+  //   Future.delayed(const Duration(seconds: 4)).then((value) {
+  //     final userId = FirebaseAuth.instance.currentUser?.uid;
+  //     if (userId == null) {
+  //       EasyNavigation.pushReplacement(
+  //           context: context, page: const LoginScreen());
+  //     } else {
+  //       context.read<AuthenticationProvider>().hospitalStreamFetchData(
+  //             context: context,
+  //             userId: userId,
+  //           );
+  //     }
+  //   });
+
+  //   super.initState();
+  // }
+
   void initState() {
+    final labId = FirebaseAuth.instance.currentUser?.uid;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (labId != null) {
+        context
+            .read<AuthenticationProvider>()
+            .labStreamFetchedData(labId: labId);
+      }
+    });
     Future.delayed(const Duration(seconds: 4)).then((value) {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-      if (userId == null) {
+      if (labId == null) {
         EasyNavigation.pushReplacement(
             context: context, page: const LoginScreen());
       } else {
-        context.read<AuthenticationProvider>().hospitalStreamFetchData(
-              context: context,
-              userId: userId,
-            );
+        context
+            .read<AuthenticationProvider>()
+            .navigationLaboratoryFuction(context: context);
       }
     });
     super.initState();

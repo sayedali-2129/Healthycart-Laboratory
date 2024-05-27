@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'package:healthy_cart_laboratory/features/location_picker/domain/model/location_model.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/domain/model/location_model.dart';
 
 class LaboratoryModel {
   String? id;

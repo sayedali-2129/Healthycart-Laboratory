@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:geocoding/geocoding.dart';
 import 'package:healthy_cart_laboratory/core/custom/toast/toast.dart';
 import 'package:healthy_cart_laboratory/core/services/open_street_map/open_street_map_model.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/domain/model/location_model.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/domain/model/location_model.dart';
 import 'package:http/http.dart' as http;
 
 class OpenStritMapServices {

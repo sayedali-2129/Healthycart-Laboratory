@@ -5,7 +5,7 @@ import 'package:healthy_cart_laboratory/core/custom/app_bar/sliver_appbar.dart';
 import 'package:healthy_cart_laboratory/core/custom/custom_button_n_search/search_field_button.dart';
 import 'package:healthy_cart_laboratory/core/custom/lottie/loading_lottie.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/application/authenication_provider.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/application/location_provider.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/application/location_provider.dart';
 import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -75,12 +75,12 @@ class _UserLocationSearchWidgetState extends State<UserLocationSearchWidget> {
             onTap: () async {
               if (locationProvider.selectedPlaceMark == null) return;
               LoadingLottie.showLoading(
-                  context: context, text: 'Saving Location..');
-              await locationProvider.setLocationByHospital(
+                  context: context, text: 'Getting Location..');
+              await locationProvider.setLocationByLaboratory(
                   context: context,
-                  isHospitaEditProfile: widget.isHospitaEditProfile ?? false,
-                  hospitalModelrequestedCount:
-                      authProvider.hospitalDataFetched?.requested);
+                  isLaboratoryEditProfile: widget.isHospitaEditProfile ?? false,
+                  labRequestedCount:
+                      authProvider.labFetchlDataFetched?.requested);
             },
             child: Padding(
               padding:

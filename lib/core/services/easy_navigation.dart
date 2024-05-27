@@ -40,4 +40,21 @@ class EasyNavigation {
   }) async {
     Navigator.of(navigatorKey.currentState?.context ?? context).pop();
   }
+
+  static Future<void> pushAndRemoveUntil({
+    required BuildContext context,
+    required Widget page,
+    PageTransitionType type = PageTransitionType.fade,
+  }) async {
+    await Navigator.pushAndRemoveUntil(
+      context,
+      PageTransition(
+        child: page,
+        type: type,
+        duration: const Duration(milliseconds: 300),
+        reverseDuration: const Duration(milliseconds: 300),
+      ),
+      (Route<dynamic> route) => false,
+    );
+  }
 }

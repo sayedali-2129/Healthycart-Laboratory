@@ -15,7 +15,7 @@ import 'package:healthy_cart_laboratory/core/general/typdef.dart';
 import 'package:healthy_cart_laboratory/core/services/easy_navigation.dart';
 import 'package:healthy_cart_laboratory/features/add_laboratory_form_page/domain/i_form_facade.dart';
 import 'package:healthy_cart_laboratory/features/add_laboratory_form_page/domain/model/laboratory_model.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/presentation/location.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/presentation/location.dart';
 import 'package:healthy_cart_laboratory/utils/constants/enums.dart';
 import 'package:injectable/injectable.dart';
 import 'package:page_transition/page_transition.dart';
@@ -125,12 +125,13 @@ class LaboratoryFormProvider extends ChangeNotifier {
   String? pdfUrl;
 
   Future<void> getPDF({required BuildContext context}) async {
-    pdfUrl = null;
     final result = await _iFormFeildFacade.getPDF();
     result.fold((failure) {
       CustomToast.errorToast(text: failure.errMsg);
       notifyListeners();
     }, (pdfFileSucess) async {
+      pdfUrl = null;
+
       pdfFile = pdfFileSucess;
       LoadingLottie.showLoading(context: context, text: 'Adding PDF...');
       await savePDF().then((value) {

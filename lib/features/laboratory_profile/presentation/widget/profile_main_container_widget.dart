@@ -19,7 +19,7 @@ class ProfileMainContainer extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(text, style: Theme.of(context).textTheme.labelLarge!),
+            Text(text, style: Theme.of(context).textTheme.labelLarge!.copyWith(fontSize: 14, color: Colors.black87)),
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: sideChild

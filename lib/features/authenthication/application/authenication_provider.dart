@@ -6,7 +6,7 @@ import 'package:healthy_cart_laboratory/features/add_laboratory_form_page/presen
 import 'package:healthy_cart_laboratory/features/authenthication/domain/i_auth_facade.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/presentation/otp_ui.dart';
 import 'package:healthy_cart_laboratory/features/home/presentation/home.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/presentation/location.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/presentation/location.dart';
 import 'package:healthy_cart_laboratory/features/pending_page/presentation/pending_page.dart';
 import 'package:healthy_cart_laboratory/features/splash_screen/splash_screen.dart';
 import 'package:injectable/injectable.dart';
@@ -16,7 +16,7 @@ import 'package:page_transition/page_transition.dart';
 class AuthenticationProvider extends ChangeNotifier {
   AuthenticationProvider(this.iAuthFacade);
   final IAuthFacade iAuthFacade;
-  LaboratoryModel? hospitalDataFetched;
+  LaboratoryModel? labFetchlDataFetched;
   String? verificationId;
   String? smsCode;
   final TextEditingController phoneNumberController = TextEditingController();
@@ -30,48 +30,67 @@ class AuthenticationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void hospitalStreamFetchData(
+  void labStreamFetchData(
       {required String userId, required BuildContext context}) {
     iAuthFacade.laboratoryStreamFetchData(userId).listen((event) {
       event.fold((failure) {}, (snapshot) {
-        hospitalDataFetched = snapshot;
+        labFetchlDataFetched = snapshot;
         isRequsetedPendingPage = snapshot.requested;
         notifyListeners();
-        if (snapshot.address == null ||
-            snapshot.image == null ||
-            snapshot.ownerName == null ||
-            snapshot.uploadLicense == null ||
-            snapshot.laboratoryName == null) {
-          EasyNavigation.pushReplacement(
-            type: PageTransitionType.bottomToTop,
-            context: context,
-            page:
-                HospitalFormScreen(phoneNo: hospitalDataFetched?.phoneNo ?? ''),
-          );
-          notifyListeners();
-        } else if (snapshot.placemark == null) {
-          EasyNavigation.pushReplacement(
-            type: PageTransitionType.bottomToTop,
-            context: context,
-            page: const LocationPage(),
-          );
-          notifyListeners();
-        } else if ((snapshot.requested == 0 || snapshot.requested == 1) &&
-            snapshot.placemark != null) {
-          EasyNavigation.pushReplacement(
-              type: PageTransitionType.bottomToTop,
-              context: context,
-              page: const PendingPageScreen());
-          notifyListeners();
-        } else {
-          EasyNavigation.pushReplacement(
-              type: PageTransitionType.bottomToTop,
-              context: context,
-              page: const HomeScreen());
-          notifyListeners();
-        }
       });
     });
+  }
+
+  bool labStreamFetchedData({required String labId}) {
+    bool result = false;
+    iAuthFacade.laboratoryStreamFetchData(labId).listen((event) {
+      event.fold((failure) {
+        result = false;
+      }, (snapshot) {
+        labFetchlDataFetched = snapshot;
+        isRequsetedPendingPage = snapshot.requested;
+        result = true;
+        notifyListeners();
+      });
+    });
+    return result;
+  }
+
+  void navigationLaboratoryFuction({required BuildContext context}) async {
+    if (labFetchlDataFetched?.address == null ||
+        labFetchlDataFetched?.image == null ||
+        labFetchlDataFetched?.laboratoryName == null ||
+        labFetchlDataFetched?.uploadLicense == null ||
+        labFetchlDataFetched?.ownerName == null) {
+      EasyNavigation.pushReplacement(
+        type: PageTransitionType.bottomToTop,
+        context: context,
+        page:
+            LaboratoryFormScreen(phoneNo: labFetchlDataFetched?.phoneNo ?? ''),
+      );
+      notifyListeners();
+    } else if (labFetchlDataFetched?.placemark == null) {
+      EasyNavigation.pushReplacement(
+        type: PageTransitionType.bottomToTop,
+        context: context,
+        page: const LocationPage(),
+      );
+      notifyListeners();
+    } else if ((labFetchlDataFetched?.requested == 0 ||
+            labFetchlDataFetched?.requested == 1) &&
+        labFetchlDataFetched?.placemark != null) {
+      EasyNavigation.pushReplacement(
+          type: PageTransitionType.bottomToTop,
+          context: context,
+          page: const PendingPageScreen());
+      notifyListeners();
+    } else {
+      EasyNavigation.pushAndRemoveUntil(
+          type: PageTransitionType.bottomToTop,
+          context: context,
+          page: const HomeScreen());
+      notifyListeners();
+    }
   }
 
   void verifyPhoneNumber({required BuildContext context}) {
@@ -106,7 +125,7 @@ class AuthenticationProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> hospitalLogOut({required BuildContext context}) async {
+  Future<void> laboratoryLogOut({required BuildContext context}) async {
     final result = await iAuthFacade.laboratoryLogOut();
     result.fold((failure) {
       Navigator.pop(context);

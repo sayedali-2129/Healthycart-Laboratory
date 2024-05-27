@@ -36,7 +36,7 @@ class PendingPageScreen extends StatelessWidget {
           children: [
             Lottie.asset(BImage.lottieReview, height: 232),
             const Gap(32),
-            (authProvider.hospitalDataFetched?.rejectionReason != null)
+            (authProvider.labFetchlDataFetched?.rejectionReason != null)
                 ? Column(
                     children: [
                       Text(
@@ -48,7 +48,7 @@ class PendingPageScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        authProvider.hospitalDataFetched?.rejectionReason ??
+                        authProvider.labFetchlDataFetched?.rejectionReason ??
                             'Your request got rejected please re-apply after sometime or contact our team.',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontSize: 14,

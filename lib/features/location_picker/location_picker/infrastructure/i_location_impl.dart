@@ -8,8 +8,8 @@ import 'package:healthy_cart_laboratory/core/general/firebase_collection.dart';
 import 'package:healthy_cart_laboratory/core/general/typdef.dart';
 import 'package:healthy_cart_laboratory/core/services/location_service.dart';
 import 'package:healthy_cart_laboratory/core/services/open_street_map/open_sctrict_map_services.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/domain/i_location_facde.dart';
-import 'package:healthy_cart_laboratory/features/location_picker/domain/model/location_model.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/domain/i_location_facde.dart';
+import 'package:healthy_cart_laboratory/features/location_picker/location_picker/domain/model/location_model.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ILocationFacade)
@@ -36,12 +36,13 @@ class ILocationImpl implements ILocationFacade {
   }
 
   @override
-  Future<void> getLocationPermisson() async {
+  Future<bool> getLocationPermisson() async {
     await _locationService.getPermission();
+    return true;
   }
 
   @override
-  Future<Either<MainFailure, Unit>> setLocationByHospital(
+  Future<Either<MainFailure, Unit>> setLocationByLaboratory(
       PlaceMark placeMark) async {
     try {
       // add Local area
