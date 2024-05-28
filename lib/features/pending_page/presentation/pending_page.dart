@@ -71,7 +71,7 @@ class PendingPageScreen extends StatelessWidget {
                 onPressed: () {
                   pendingProvider.reDirectToWhatsApp(
                       message:
-                          'Hi,I like to know the details of the request regarding hospital approval through your application.');
+                          'Hi,I like to know the details of the request regarding laboratory approval through your application.');
                 },
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

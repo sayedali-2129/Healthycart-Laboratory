@@ -85,7 +85,7 @@ class LoginScreen extends StatelessWidget {
                             return;
                           }
                           LoadingLottie.showLoading(
-                              context: context, text: 'Loading...');
+                              context: context, text: 'Sending OTP...');
 
                           authenticationProvider.setNumber();
                           authenticationProvider.verifyPhoneNumber(

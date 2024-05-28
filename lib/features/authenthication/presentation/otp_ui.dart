@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -128,10 +129,11 @@ class _OTPScreenState extends State<OTPScreen> {
                       height: 48,
                       onTap: () {
                         LoadingLottie.showLoading(
-                            context: context, text: 'Loading...');
+                            context: context, text: 'Verifying OTP...');
                         authenticationProvider.verifySmsCode(
                             smsCode: otpController.text.trim(),
                             context: context);
+                        authenticationProvider.phoneNumberController.clear();
                       },
                       text: 'Verify code',
                       buttonColor: BColors.buttonLightColor,
