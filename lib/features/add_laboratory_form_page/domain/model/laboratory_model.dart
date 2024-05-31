@@ -54,7 +54,7 @@ class LaboratoryModel {
 
   Map<String, dynamic> toEditMap() {
     return {
-      'lalaboratoryName': laboratoryName,
+      'laboratoryName': laboratoryName,
       'address': address,
       'ownerName': ownerName,
       'uploadLicense': uploadLicense,

@@ -59,28 +59,28 @@ class LaboratoryFormProvider extends ChangeNotifier {
     });
   }
 
-  final TextEditingController hospitalNameController = TextEditingController();
+  final TextEditingController labNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController ownerNameController = TextEditingController();
 
-  List<String> keywordHospitalBuider() {
-    return keywordsBuilder(hospitalNameController.text);
+  List<String> keywordLabBuider() {
+    return keywordsBuilder(labNameController.text);
   }
 
-  LaboratoryModel? hospitalDetail;
+  LaboratoryModel? labDetail;
   String? laboratoryId = FirebaseAuth.instance.currentUser?.uid;
   Placemark? placemark;
   AdminType? adminType;
-  Future<void> addHospitalForm({
+  Future<void> addLabForm({
     required BuildContext context,
   }) async {
-    keywordHospitalBuider();
-    hospitalDetail = LaboratoryModel(
+    keywordLabBuider();
+    labDetail = LaboratoryModel(
         createdAt: Timestamp.now(),
-        keywords: keywordHospitalBuider(),
+        keywords: keywordLabBuider(),
         phoneNo: phoneNumberController.text,
-        laboratoryName: hospitalNameController.text,
+        laboratoryName: labNameController.text,
         address: addressController.text,
         ownerName: ownerNameController.text,
         uploadLicense: pdfUrl,
@@ -90,7 +90,7 @@ class LaboratoryFormProvider extends ChangeNotifier {
         isActive: true);
 
     final result = await _iFormFeildFacade.addLaboratoryDetails(
-        laboratoryDetails: hospitalDetail!, laboratoryId: laboratoryId!);
+        laboratoryDetails: labDetail!, laboratoryId: laboratoryId!);
     result.fold((failure) {
       CustomToast.errorToast(text: failure.errMsg);
       Navigator.pop(context);
@@ -108,7 +108,7 @@ class LaboratoryFormProvider extends ChangeNotifier {
   }
 
   void clearAllData() {
-    hospitalNameController.clear();
+    labNameController.clear();
     addressController.clear();
     adminType = null;
     pdfFile = null;
@@ -180,24 +180,24 @@ class LaboratoryFormProvider extends ChangeNotifier {
   }
 
   ///edit data from the profile section
-  void setEditData(LaboratoryModel hospitalDetailsEdit) {
-    hospitalNameController.text = hospitalDetailsEdit.laboratoryName ?? '';
-    addressController.text = hospitalDetailsEdit.address ?? '';
-    phoneNumberController.text = hospitalDetailsEdit.phoneNo ?? '';
-    ownerNameController.text = hospitalDetailsEdit.ownerName ?? '';
-    pdfUrl = hospitalDetailsEdit.uploadLicense;
-    imageUrl = hospitalDetailsEdit.image;
+  void setEditData(LaboratoryModel labDetailsEdit) {
+    labNameController.text = labDetailsEdit.laboratoryName ?? '';
+    addressController.text = labDetailsEdit.address ?? '';
+    phoneNumberController.text = labDetailsEdit.phoneNo ?? '';
+    ownerNameController.text = labDetailsEdit.ownerName ?? '';
+    pdfUrl = labDetailsEdit.uploadLicense;
+    imageUrl = labDetailsEdit.image;
     notifyListeners();
   }
 
-  Future<void> updateHospitalForm({
+  Future<void> updateLabForm({
     required BuildContext context,
   }) async {
-    keywordHospitalBuider();
-    hospitalDetail = LaboratoryModel(
-      keywords: keywordHospitalBuider(),
+    keywordLabBuider();
+    labDetail = LaboratoryModel(
+      keywords: keywordLabBuider(),
       phoneNo: phoneNumberController.text,
-      laboratoryName: hospitalNameController.text,
+      laboratoryName: labNameController.text,
       address: addressController.text,
       ownerName: ownerNameController.text,
       uploadLicense: pdfUrl,
@@ -205,7 +205,7 @@ class LaboratoryFormProvider extends ChangeNotifier {
     );
 
     final result = await _iFormFeildFacade.updateLaboratoryForm(
-        laboratoryDetails: hospitalDetail!, laboratoryId: laboratoryId!);
+        laboratoryDetails: labDetail!, laboratoryId: laboratoryId!);
 
     result.fold((failure) {
       CustomToast.errorToast(text: failure.errMsg);

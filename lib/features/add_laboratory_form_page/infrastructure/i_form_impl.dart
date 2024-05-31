@@ -13,21 +13,29 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: IFormFeildFacade)
 class IFormFieldImpl implements IFormFeildFacade {
-  IFormFieldImpl(this._repo, this._imageService, this._pdfService);
-  final FirebaseFirestore _repo;
+  IFormFieldImpl(this._firebaseFirestore, this._imageService, this._pdfService);
+  final FirebaseFirestore _firebaseFirestore;
   final ImageService _imageService;
   final PdfPickerService _pdfService;
   @override
-  /////////////adding hospital to the collection
+  /////////////adding lab to the collection
   FutureResult<String> addLaboratoryDetails({
     required LaboratoryModel laboratoryDetails,
     required String laboratoryId,
   }) async {
     try {
-      await _repo
-          .collection(FirebaseCollections.laboratory)
-          .doc(laboratoryId)
-          .update(laboratoryDetails.toMap());
+      final batch = _firebaseFirestore.batch();
+      batch.update(
+          _firebaseFirestore
+              .collection(FirebaseCollections.laboratory)
+              .doc(laboratoryId),
+          laboratoryDetails.toMap());
+      batch.update(
+          _firebaseFirestore
+              .collection(FirebaseCollections.counts)
+              .doc('htfK5JIPTaZVlZi6fGdZ'),
+          {'pendingLabs': FieldValue.increment(1)});
+      await batch.commit();
       return right('Sucessfully sent for review');
     } on FirebaseException catch (e) {
       return left(MainFailure.firebaseException(errMsg: e.code));
@@ -41,7 +49,7 @@ class IFormFieldImpl implements IFormFeildFacade {
     required String laboratoryId,
   }) async {
     try {
-      final snapshot = await _repo
+      final snapshot = await _firebaseFirestore
           .collection(FirebaseCollections.laboratory)
           .doc(laboratoryId)
           .get();
@@ -99,7 +107,7 @@ class IFormFieldImpl implements IFormFeildFacade {
     required String laboratoryId,
   }) async {
     try {
-      await _repo
+      await _firebaseFirestore
           .collection(FirebaseCollections.laboratory)
           .doc(laboratoryId)
           .update(laboratoryDetails.toEditMap());

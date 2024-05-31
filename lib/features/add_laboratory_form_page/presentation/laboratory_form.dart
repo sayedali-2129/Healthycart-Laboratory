@@ -144,7 +144,7 @@ class LaboratoryFormScreen extends StatelessWidget {
                               minlines: 1,
                               maxlines: 2,
                               validator: BValidator.validate,
-                              controller: formProvider.hospitalNameController,
+                              controller: formProvider.labNameController,
                               style: Theme.of(context)
                                   .textTheme
                                   .labelLarge!
@@ -225,6 +225,7 @@ class LaboratoryFormScreen extends StatelessWidget {
                             (formProvider.pdfUrl != null)
                                 ? Center(
                                     child: PDFShowerWidget(
+                                      model: laboratoryModel,
                                       formProvider: formProvider,
                                     ),
                                   )
@@ -258,7 +259,7 @@ class LaboratoryFormScreen extends StatelessWidget {
                                     await formProvider
                                         .saveImage()
                                         .then((value) async {
-                                      await formProvider.addHospitalForm(
+                                      await formProvider.addLabForm(
                                           context: context);
                                     });
                                   } else {
@@ -266,7 +267,7 @@ class LaboratoryFormScreen extends StatelessWidget {
                                       await formProvider.saveImage();
                                     }
 
-                                    await formProvider.updateHospitalForm(
+                                    await formProvider.updateLabForm(
                                       context: context,
                                     );
                                   }
