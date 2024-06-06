@@ -15,7 +15,7 @@ import 'package:healthy_cart_laboratory/features/tests_screen/presentation/widge
 import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:provider/provider.dart';
 
-class TestAddBottomSheet extends StatelessWidget {
+class TestAddBottomSheet extends StatefulWidget {
   const TestAddBottomSheet({
     super.key,
     required this.onImageTap,
@@ -30,15 +30,25 @@ class TestAddBottomSheet extends StatelessWidget {
   final TestModel? editData;
 
   @override
-  Widget build(BuildContext context) {
+  State<TestAddBottomSheet> createState() => _TestAddBottomSheetState();
+}
+
+class _TestAddBottomSheetState extends State<TestAddBottomSheet> {
+  @override
+  void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
-        if (editData != null) {
+        if (widget.editData != null) {
           Provider.of<TestProvider>(context, listen: false)
-              .setEditData(editData!);
+              .setEditData(widget.editData!);
         }
       },
     );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Consumer<TestProvider>(builder: (context, testProvider, _) {
       return PopScope(
         onPopInvoked: (didPop) {
@@ -70,14 +80,14 @@ class TestAddBottomSheet extends StatelessWidget {
                             testProvider.imageFile == null &&
                                     testProvider.imageUrl == null
                                 ? CircularAddImageWidget(
-                                    addTap: onImageTap,
+                                    addTap: widget.onImageTap,
                                     iconSize: 48,
                                     height: 120,
                                     width: 120,
                                     radius: 120)
                                 : (testProvider.imageFile != null)
                                     ? GestureDetector(
-                                        onTap: onImageTap,
+                                        onTap: widget.onImageTap,
                                         child: Container(
                                           clipBehavior: Clip.antiAlias,
                                           height: 120,
@@ -91,7 +101,7 @@ class TestAddBottomSheet extends StatelessWidget {
                                         ),
                                       )
                                     : GestureDetector(
-                                        onTap: onImageTap,
+                                        onTap: widget.onImageTap,
                                         child: Container(
                                             clipBehavior: Clip.antiAlias,
                                             height: 120,
@@ -119,7 +129,6 @@ class TestAddBottomSheet extends StatelessWidget {
                               labelText: 'Set Offer',
                               keyboardType: TextInputType.number,
                               controller: testProvider.offerPriceController,
-                              validator: BValidator.validate,
                             ),
                             const Gap(10),
                             Row(
@@ -160,18 +169,19 @@ class TestAddBottomSheet extends StatelessWidget {
                                 } else {
                                   LoadingLottie.showLoading(
                                       context: context,
-                                      text: editData == null
+                                      text: widget.editData == null
                                           ? 'Adding Test'
                                           : 'Updating Test...');
                                   if (testProvider.imageUrl == null) {
                                     await testProvider.saveImage();
-                                    await testProvider.addNewTest(labId: labId);
+                                    await testProvider.addNewTest(
+                                        labId: widget.labId);
                                   } else {
                                     await testProvider.editTest(
-                                        testDetails: editData!,
-                                        index: index!,
-                                        testId:
-                                            testProvider.testList[index!].id!);
+                                        testDetails: widget.editData!,
+                                        index: widget.index!,
+                                        testId: testProvider
+                                            .testList[widget.index!].id!);
                                   }
                                   EasyNavigation.pop(context: context);
                                   EasyNavigation.pop(context: context);

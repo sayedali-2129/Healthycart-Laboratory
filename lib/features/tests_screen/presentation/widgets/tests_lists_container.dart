@@ -117,29 +117,31 @@ class TestsListContainer extends StatelessWidget {
                                     fontWeight: FontWeight.w500),
                           )
                         ])),
-                        RichText(
-                            text: TextSpan(children: [
-                          TextSpan(
-                            text: 'Offer Price - ',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(
-                                    color: BColors.mainlightColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                          ),
-                          TextSpan(
-                            text: '₹${tests.offerPrice}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(
-                                    color: BColors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500),
-                          )
-                        ]))
+                        tests.offerPrice == null
+                            ? const Gap(0)
+                            : RichText(
+                                text: TextSpan(children: [
+                                TextSpan(
+                                  text: 'Offer Price - ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                          color: BColors.mainlightColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600),
+                                ),
+                                TextSpan(
+                                  text: '₹${tests.offerPrice}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                          color: BColors.black,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500),
+                                )
+                              ]))
                       ],
                     )
                   ],
