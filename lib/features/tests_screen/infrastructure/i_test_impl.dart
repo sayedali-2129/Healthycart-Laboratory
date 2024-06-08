@@ -71,14 +71,14 @@ class ITestImpl implements ITestFacade {
   }
 
   @override
-  FutureResult<String> editTest(
+  FutureResult<TestModel> editTest(
       {required String testId, required TestModel testModel}) async {
     try {
       await _firestore
           .collection(FirebaseCollections.laboratoryTests)
           .doc(testId)
           .update(testModel.toMap());
-      return right('Test Updated Successfully');
+      return right(testModel.copyWith(id: testId));
     } catch (e) {
       return left(MainFailure.generalException(errMsg: e.toString()));
     }

@@ -151,9 +151,9 @@ class TestProvider with ChangeNotifier {
         CustomToast.errorToast(text: err.errMsg);
       },
       (success) {
-        CustomToast.sucessToast(text: success);
+        CustomToast.sucessToast(text: 'Test Updated Successfully');
         testList.removeAt(index);
-        testList.insert(index, testModel);
+        testList.insert(index, success);
       },
     );
     notifyListeners();

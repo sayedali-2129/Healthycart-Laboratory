@@ -9,6 +9,6 @@ abstract class ITestFacade {
   FutureResult<String> addNewTest({required TestModel testModel});
   FutureResult<List<TestModel>> getTests({required String labId});
   FutureResult<String> deleteTest({required String testId});
-  FutureResult<String> editTest(
+  FutureResult<TestModel> editTest(
       {required String testId, required TestModel testModel});
 }
