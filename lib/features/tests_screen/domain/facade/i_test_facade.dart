@@ -6,7 +6,7 @@ import 'package:healthy_cart_laboratory/features/tests_screen/domain/models/test
 abstract class ITestFacade {
   FutureResult<File> pickLabImage();
   FutureResult<String> saveLabImage({required File imageFile});
-  FutureResult<String> addNewTest({required TestModel testModel});
+  FutureResult<TestModel> addNewTest({required TestModel testModel});
   FutureResult<List<TestModel>> getTests({required String labId});
   FutureResult<String> deleteTest({required String testId});
   FutureResult<TestModel> editTest(

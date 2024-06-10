@@ -89,8 +89,8 @@ class TestProvider with ChangeNotifier {
         CustomToast.errorToast(text: err.errMsg);
       },
       (success) {
-        CustomToast.sucessToast(text: success);
-        testList.insert(0, testModelAdd);
+        CustomToast.sucessToast(text: 'Test Added Successfully');
+        testList.insert(0, success);
 
         clearImages();
         clearFields();

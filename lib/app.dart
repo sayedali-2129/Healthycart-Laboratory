@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthy_cart_laboratory/core/di/injection.dart';
 import 'package:healthy_cart_laboratory/features/add_laboratory_form_page/application/laboratory_form_provider.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/application/authenication_provider.dart';
-import 'package:healthy_cart_laboratory/features/lab_request_userside/application/provider/request_doctor_provider.dart';
+import 'package:healthy_cart_laboratory/features/lab_request_userside/application/provider/lab_orders_provider.dart';
 import 'package:healthy_cart_laboratory/features/laboratory_banner/application/add_banner_provider.dart';
 import 'package:healthy_cart_laboratory/features/laboratory_profile/application/profile_provider.dart';
 import 'package:healthy_cart_laboratory/features/location_picker/location_picker/application/location_provider.dart';
@@ -27,7 +27,7 @@ class App extends StatelessWidget {
           create: (context) => sl<ProfileProvider>(),
         ),
         ChangeNotifierProvider(
-          create: (context) => RequestDoctorProvider(),
+          create: (context) => sl<LabOrdersProvider>(),
         ),
         ChangeNotifierProvider(
           create: (context) => sl<AddBannerProvider>(),

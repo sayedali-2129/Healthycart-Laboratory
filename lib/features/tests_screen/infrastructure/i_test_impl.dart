@@ -28,12 +28,12 @@ class ITestImpl implements ITestFacade {
   }
 
   @override
-  FutureResult<String> addNewTest({required TestModel testModel}) async {
+  FutureResult<TestModel> addNewTest({required TestModel testModel}) async {
     try {
       await _firestore
           .collection(FirebaseCollections.laboratoryTests)
           .add(testModel.toMap());
-      return right('New Test Added Successfully');
+      return right(testModel);
     } catch (e) {
       return left(MainFailure.generalException(errMsg: e.toString()));
     }

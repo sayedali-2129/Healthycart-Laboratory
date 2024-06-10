@@ -4,7 +4,9 @@ import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:healthy_cart_laboratory/utils/constants/image/image.dart';
 
 class CustomCurveAppBarWidget extends StatelessWidget {
-  const CustomCurveAppBarWidget({super.key});
+  const CustomCurveAppBarWidget({super.key, this.bottom});
+
+  final PreferredSizeWidget? bottom;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,7 @@ class CustomCurveAppBarWidget extends StatelessWidget {
               ),
             ]),
       ),
+      bottom: bottom,
     );
   }
 }
