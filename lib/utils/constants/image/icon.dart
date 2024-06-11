@@ -7,4 +7,5 @@ class BIcon {
   static const String addBannerBlack = 'assets/icons/add_banner_black.png';
   static const String profile = 'assets/icons/profile.png';
   static const String profileBlack = 'assets/icons/profile_black.png';
+  static const String uploadPng = 'assets/icons/upload png.png';
 }

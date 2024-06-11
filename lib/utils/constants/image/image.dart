@@ -17,4 +17,6 @@ class BImage {
   static const String imagePDF = 'assets/image/pdf.png';
   static const String labloading = 'assets/json/lab-lottie.json';
   static const String appBarText = 'assets/image/HEALTHY CART.png';
+  static const String userAvatar = 'assets/image/user avatar.png';
+  static const String noData = 'assets/image/no data.png';
 }

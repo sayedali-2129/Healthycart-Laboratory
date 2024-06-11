@@ -23,7 +23,7 @@ class AddressCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Address :-',
+                'Door Step Address :-',
                 style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -71,9 +71,14 @@ class AddressCard extends StatelessWidget {
                                     .validate();
                               } else {
                                 orderProvider.updateDoorStepCharge(
-                                    orderId:
-                                        orderProvider.newOrderList[index].id!);
+                                  charge: num.tryParse(orderProvider
+                                          .deliveryChargeController.text) ??
+                                      0,
+                                  orderId:
+                                      orderProvider.newOrderList[index].id!,
+                                );
                                 orderProvider.deliveryChargeController.clear();
+
                                 Navigator.pop(context);
                               }
                             })

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:shimmer/shimmer.dart';
-
 
 class CustomCachedNetworkImage extends StatelessWidget {
   const CustomCachedNetworkImage({super.key, required this.image});
@@ -17,7 +17,7 @@ class CustomCachedNetworkImage extends StatelessWidget {
             image: DecorationImage(image: imageProvider, fit: BoxFit.cover)),
       ),
       placeholder: (context, url) => Shimmer.fromColors(
-        baseColor: Colors.blue,
+        baseColor: BColors.mainlightColor,
         highlightColor: Colors.grey,
         child: Container(
           color: Colors.grey.withOpacity(0.2),
