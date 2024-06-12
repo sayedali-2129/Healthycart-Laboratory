@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:healthy_cart_laboratory/core/failures/main_failure.dart';
 import 'package:healthy_cart_laboratory/core/general/typdef.dart';
@@ -13,9 +15,22 @@ abstract class ILabOrdersFacade {
       required int orderStatus,
       required num? finalAmount,
       required num? currentAmount,
-      String? rejectionReason});
+      String? rejectReason});
   Stream<Either<MainFailure, List<LabOrdersModel>>> getOnProcessOrders({
     required String labId,
   });
   FutureResult<List<LabOrdersModel>> getRejectedOrders({required String labId});
+  FutureResult<String> setTimeSlot(
+      {required String orderId, required String dateAndTime});
+  FutureResult<File> getPDF();
+  FutureResult<String?> savePDF({
+    required File pdfFile,
+  });
+  FutureResult<String?> deletePDF({
+    required String pdfUrl,
+  });
+  FutureResult<String> uploadPdfReport(
+      {required String orderId, required String pdfUrl});
+
+  void clearData();
 }

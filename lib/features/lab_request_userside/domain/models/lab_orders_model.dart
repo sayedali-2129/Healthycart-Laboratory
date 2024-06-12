@@ -21,6 +21,10 @@ class LabOrdersModel {
   num? finalAmount;
   Timestamp? acceptedAt;
   String? rejectReason;
+  Timestamp? rejectedAt;
+  String? timeSlot;
+  String? resultUrl;
+
   LabOrdersModel({
     this.id,
     this.labId,
@@ -39,6 +43,9 @@ class LabOrdersModel {
     this.finalAmount,
     this.acceptedAt,
     this.rejectReason,
+    this.rejectedAt,
+    this.timeSlot,
+    this.resultUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -60,6 +67,9 @@ class LabOrdersModel {
       'finalAmount': finalAmount,
       'acceptedAt': acceptedAt,
       'rejectReason': rejectReason,
+      'rejectedAt': rejectedAt,
+      'timeSlot': timeSlot,
+      'resultUrl': resultUrl,
     };
   }
 
@@ -100,6 +110,10 @@ class LabOrdersModel {
           map['acceptedAt'] != null ? map['acceptedAt'] as Timestamp : null,
       rejectReason:
           map['rejectReason'] != null ? map['rejectReason'] as String : null,
+      rejectedAt:
+          map['rejectedAt'] != null ? map['rejectedAt'] as Timestamp : null,
+      timeSlot: map['timeSlot'] != null ? map['timeSlot'] as String : null,
+      resultUrl: map['resultUrl'] != null ? map['resultUrl'] as String : null,
     );
   }
 
@@ -121,6 +135,9 @@ class LabOrdersModel {
     num? doorStepCharge,
     Timestamp? acceptedAt,
     String? rejectReason,
+    Timestamp? rejectedAt,
+    String? timeSlot,
+    String? resultUrl,
   }) {
     return LabOrdersModel(
       id: id ?? this.id,
@@ -140,6 +157,9 @@ class LabOrdersModel {
       finalAmount: finalAmount ?? this.finalAmount,
       acceptedAt: acceptedAt ?? this.acceptedAt,
       rejectReason: rejectReason ?? this.rejectReason,
+      rejectedAt: rejectedAt ?? this.rejectedAt,
+      timeSlot: timeSlot ?? this.timeSlot,
+      resultUrl: resultUrl ?? this.resultUrl,
     );
   }
 }

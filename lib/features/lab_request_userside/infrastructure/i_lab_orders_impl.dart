@@ -1,21 +1,28 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:healthy_cart_laboratory/core/failures/main_failure.dart';
 import 'package:healthy_cart_laboratory/core/general/firebase_collection.dart';
 import 'package:healthy_cart_laboratory/core/general/typdef.dart';
+import 'package:healthy_cart_laboratory/core/services/pdf_picker.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/domain/facade/i_lab_orders_facade.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/domain/models/lab_orders_model.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ILabOrdersFacade)
 class ILabOrdersImpl implements ILabOrdersFacade {
-  ILabOrdersImpl(this._firestore);
+  ILabOrdersImpl(this._firestore, this._pdfService);
+  final PdfPickerService _pdfService;
 
   final FirebaseFirestore _firestore;
   StreamSubscription? newOrderSubscription;
   StreamSubscription? onProcessOrderSubscription;
+
+  DocumentSnapshot<Map<String, dynamic>>? lastDoc;
+  bool noMoreData = false;
 
   StreamController<Either<MainFailure, List<LabOrdersModel>>>
       newOrderStreamController =
@@ -95,15 +102,34 @@ class ILabOrdersImpl implements ILabOrdersFacade {
     }
   }
 
+  /* ------------------------------ SET TIME SLOT ----------------------------- */
+  @override
+  FutureResult<String> setTimeSlot(
+      {required String orderId, required String dateAndTime}) async {
+    try {
+      await _firestore
+          .collection(FirebaseCollections.userOrdersCollection)
+          .doc(orderId)
+          .update({
+        'timeSlot': dateAndTime,
+      });
+      return right('Time slot updated successfully');
+    } catch (e) {
+      return left(MainFailure.generalException(errMsg: e.toString()));
+    }
+  }
+
 /* ---------------------------- UPDATE ORDER STATUS TO ON PROCESS -------------------------- */
+/* -------------------------------------------------------------------------- */
   @override
   FutureResult<String> updateOrderStatus(
       {required String orderId,
       required int orderStatus,
       required num? finalAmount,
       required num? currentAmount,
-      String? rejectionReason}) async {
+      String? rejectReason}) async {
     try {
+      /* ------------------------------ ACCEPT ORDER ------------------------------ */
       if (orderStatus == 1) {
         await _firestore
             .collection(FirebaseCollections.userOrdersCollection)
@@ -125,17 +151,23 @@ class ILabOrdersImpl implements ILabOrdersFacade {
           );
         }
         return right('Order Accepted successfully');
+        /* ----------------------------- COMPLETE ORDER ----------------------------- */
       } else if (orderStatus == 2) {
         await _firestore
             .collection(FirebaseCollections.userOrdersCollection)
             .doc(orderId)
             .update({'orderStatus': 2});
         return right('Order Completed successfully');
+        /* ----------------------------- REJECT ORDER ----------------------------- */
       } else if (orderStatus == 3) {
         await _firestore
             .collection(FirebaseCollections.userOrdersCollection)
             .doc(orderId)
-            .update({'orderStatus': 3, 'rejectionReason': rejectionReason});
+            .update({
+          'orderStatus': 3,
+          'rejectReason': rejectReason,
+          'rejectedAt': Timestamp.now()
+        });
         return right('Order Rejected');
       }
       return left(
@@ -149,19 +181,74 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   @override
   FutureResult<List<LabOrdersModel>> getRejectedOrders(
       {required String labId}) async {
+    if (noMoreData) return right([]);
     try {
-      final responce = await _firestore
+      Query query = _firestore
           .collection(FirebaseCollections.userOrdersCollection)
           .where('labId', isEqualTo: labId)
           .where('orderStatus', isEqualTo: 3)
-          .get();
+          .orderBy('rejectedAt', descending: true);
 
-      final rejectedOrderList = responce.docs
-          .map((e) => LabOrdersModel.fromMap(e.data()).copyWith(id: e.id))
+      if (lastDoc != null) {
+        query = query.startAfterDocument(lastDoc!);
+      }
+      final snapshot = await query.limit(4).get();
+      if (snapshot.docs.length < 4 || snapshot.docs.isEmpty) {
+        noMoreData = true;
+      } else {
+        lastDoc = snapshot.docs.last as DocumentSnapshot<Map<String, dynamic>>;
+      }
+      final rejectedOrderList = snapshot.docs
+          .map((e) => LabOrdersModel.fromMap(e.data() as Map<String, dynamic>)
+              .copyWith(id: e.id))
           .toList();
+
       return right(rejectedOrderList);
     } catch (e) {
       return left(MainFailure.generalException(errMsg: e.toString()));
     }
+  }
+
+  /* ---------------------------- UPLOAD PDF REPORT --------------------------- */
+  @override
+  FutureResult<File> getPDF() async {
+    return await _pdfService.getPdfFile();
+  }
+
+  @override
+  FutureResult<String?> savePDF({
+    required File pdfFile,
+  }) async {
+    return await _pdfService.uploadPdf(pdfFile: pdfFile);
+  }
+
+  @override
+  FutureResult<String?> deletePDF({
+    required String pdfUrl,
+  }) async {
+    return await _pdfService.deletePdfUrl(url: pdfUrl);
+  }
+
+  @override
+  FutureResult<String> uploadPdfReport(
+      {required String orderId, required String pdfUrl}) async {
+    try {
+      log('called');
+      await _firestore
+          .collection(FirebaseCollections.userOrdersCollection)
+          .doc(orderId)
+          .update({'resultUrl': pdfUrl});
+      log(pdfUrl);
+      return right('Result uploaded successfully');
+    } catch (e) {
+      return left(MainFailure.generalException(errMsg: e.toString()));
+    }
+  }
+  /* -------------------------------------------------------------------------- */
+
+  @override
+  void clearData() {
+    lastDoc = null;
+    noMoreData = false;
   }
 }

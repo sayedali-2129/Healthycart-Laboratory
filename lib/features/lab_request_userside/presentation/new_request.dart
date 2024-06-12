@@ -3,11 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:healthy_cart_laboratory/core/custom/confirm_alertbox/confirm_delete_widget.dart';
+import 'package:healthy_cart_laboratory/core/custom/custom_button_n_search/button_widget.dart';
 import 'package:healthy_cart_laboratory/core/custom/no_data_widget.dart';
-import 'package:healthy_cart_laboratory/core/general/cached_network_image.dart';
+import 'package:healthy_cart_laboratory/core/custom/toast/toast.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/application/authenication_provider.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/application/provider/lab_orders_provider.dart';
+import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/widgets/date_and_time_picker.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/widgets/reject_popup.dart';
+import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/widgets/selected_test_list.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/widgets/user_address_card.dart';
 import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:intl/intl.dart';
@@ -108,64 +111,27 @@ class _NewRequestState extends State<NewRequest> {
                                   ),
                                   const Gap(8),
                                   ListView.separated(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    separatorBuilder: (context, index) =>
-                                        const Gap(8),
-                                    itemCount: ordersProvider
-                                        .newOrderList[index]
-                                        .selectedTest!
-                                        .length,
-                                    itemBuilder: (context, testIndex) {
-                                      return Container(
-                                        height: 70,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              ///// IMAGE CIRCLE /////
-                                              Container(
-                                                clipBehavior: Clip.antiAlias,
-                                                width: 55,
-                                                height: 55,
-                                                decoration: const BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.amber),
-                                                child: CustomCachedNetworkImage(
-                                                    image: ordersProvider
-                                                        .newOrderList[index]
-                                                        .selectedTest![
-                                                            testIndex]
-                                                        .testImage!),
-                                              ),
-                                              const Gap(8),
-                                              Text(
-                                                ordersProvider
-                                                    .newOrderList[index]
-                                                    .selectedTest![testIndex]
-                                                    .testName!,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge!
-                                                    .copyWith(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      separatorBuilder: (context, index) =>
+                                          const Gap(8),
+                                      itemCount: ordersProvider
+                                          .newOrderList[index]
+                                          .selectedTest!
+                                          .length,
+                                      itemBuilder: (context, testIndex) {
+                                        return SelectedTestsCard(
+                                          image: ordersProvider
+                                              .newOrderList[index]
+                                              .selectedTest![testIndex]
+                                              .testImage!,
+                                          testName: ordersProvider
+                                              .newOrderList[index]
+                                              .selectedTest![testIndex]
+                                              .testName!,
+                                        );
+                                      }),
                                   const Gap(8),
                                   UserDetailsContainer(
                                     userName: ordersProvider.newOrderList[index]
@@ -180,6 +146,13 @@ class _NewRequestState extends State<NewRequest> {
                                     gender: ordersProvider.newOrderList[index]
                                             .userAddress!.phoneNumber ??
                                         'no',
+                                    onTap: () async {
+                                      await ordersProvider.lauchDialer(
+                                          phoneNumber: ordersProvider
+                                              .newOrderList[index]
+                                              .userDetails!
+                                              .phoneNo!);
+                                    },
                                   ),
                                   const Gap(8),
                                   ordersProvider.newOrderList[index]
@@ -248,7 +221,135 @@ class _NewRequestState extends State<NewRequest> {
                                       ),
                                     ),
                                   ),
-                                  const Gap(8),
+                                  const Gap(12),
+
+                                  /* --------------------------- TIME SLOT SELECTION -------------------------- */
+
+                                  if (ordersProvider
+                                          .newOrderList[index].testMode ==
+                                      'Home')
+                                    ordersProvider
+                                                .newOrderList[index].timeSlot ==
+                                            null
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ButtonWidget(
+                                                buttonHeight: 42,
+                                                buttonWidth: 180,
+                                                buttonColor: BColors.darkblue,
+                                                buttonWidget: const Text(
+                                                  'Select Date & Time',
+                                                  style: TextStyle(
+                                                      color: BColors.white,
+                                                      fontSize: 12),
+                                                ),
+                                                onPressed: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          DateAndTimePick(
+                                                            onSave: () {
+                                                              if (ordersProvider.selectedTimeSlot1 != null &&
+                                                                  ordersProvider
+                                                                          .selectedTimeSlot2 !=
+                                                                      null &&
+                                                                  ordersProvider
+                                                                      .dateController
+                                                                      .text
+                                                                      .isNotEmpty) {
+                                                                ordersProvider.setTimeSlot(
+                                                                    orderId: ordersProvider
+                                                                        .newOrderList[
+                                                                            index]
+                                                                        .id!,
+                                                                    dateAndTime:
+                                                                        '${ordersProvider.dateController.text} - ${ordersProvider.selectedTimeSlot1} - ${ordersProvider.selectedTimeSlot2}');
+                                                                Navigator.pop(
+                                                                    context);
+                                                              } else {
+                                                                CustomToast
+                                                                    .errorToast(
+                                                                        text:
+                                                                            'Please select date and time');
+                                                              }
+                                                            },
+                                                          ));
+                                                },
+                                              ),
+                                            ],
+                                          )
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    border:
+                                                        Border.all(width: 0.5),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8)),
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          ordersProvider
+                                                                  .newOrderList[
+                                                                      index]
+                                                                  .timeSlot ??
+                                                              '',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyMedium!
+                                                              .copyWith(
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                        const Gap(8),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) =>
+                                                                        DateAndTimePick(
+                                                                          onSave:
+                                                                              () {
+                                                                            if (ordersProvider.selectedTimeSlot1 != null &&
+                                                                                ordersProvider.selectedTimeSlot2 != null &&
+                                                                                ordersProvider.dateController.text.isNotEmpty) {
+                                                                              ordersProvider.setTimeSlot(orderId: ordersProvider.newOrderList[index].id!, dateAndTime: '${ordersProvider.dateController.text} - ${ordersProvider.selectedTimeSlot1} - ${ordersProvider.selectedTimeSlot2}');
+                                                                              Navigator.pop(context);
+                                                                            } else {
+                                                                              CustomToast.errorToast(text: 'Please select date and time');
+                                                                            }
+                                                                          },
+                                                                        ));
+                                                          },
+                                                          child: const Icon(
+                                                            Icons.edit_outlined,
+                                                            color:
+                                                                BColors.black,
+                                                            size: 20,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+
+                                  /* -------------------------------------------------------------------------- */
+                                  const Gap(12),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -281,11 +382,13 @@ class _NewRequestState extends State<NewRequest> {
                                                           .newOrderList[index]
                                                           .id!,
                                                       orderStatus: 3,
-                                                      rejectionReason:
-                                                          ordersProvider
-                                                              .rejectionController
-                                                              .text,
+                                                      rejectReason: ordersProvider
+                                                          .rejectionController
+                                                          .text,
                                                     );
+                                                    ordersProvider
+                                                        .rejectionController
+                                                        .clear();
                                                     Navigator.pop(context);
                                                   }
                                                 },
@@ -315,6 +418,19 @@ class _NewRequestState extends State<NewRequest> {
                                         width: 136,
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            if (ordersProvider
+                                                        .newOrderList[index]
+                                                        .testMode ==
+                                                    'Home' &&
+                                                ordersProvider
+                                                        .newOrderList[index]
+                                                        .timeSlot ==
+                                                    null) {
+                                              CustomToast.errorToast(
+                                                  text:
+                                                      'Please select date and time');
+                                              return;
+                                            }
                                             ConfirmAlertBoxWidget
                                                 .showAlertConfirmBox(
                                                     context: context,
@@ -418,11 +534,13 @@ class UserDetailsContainer extends StatelessWidget {
     required this.age,
     required this.phoneNumber,
     required this.gender,
+    this.onTap,
   });
   final String userName;
   final String age;
   final String phoneNumber;
   final String gender;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -490,7 +608,7 @@ class UserDetailsContainer extends StatelessWidget {
                         height: 40,
                         child: Center(
                             child: IconButton(
-                                onPressed: () {},
+                                onPressed: onTap,
                                 icon: const Icon(Icons.phone,
                                     size: 24, color: Colors.blue))))),
               ],

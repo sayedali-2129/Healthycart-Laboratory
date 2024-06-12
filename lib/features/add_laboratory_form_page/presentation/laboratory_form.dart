@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:healthy_cart_laboratory/core/custom/app_bar/sliver_appbar.dart';
@@ -145,6 +146,27 @@ class LaboratoryFormScreen extends StatelessWidget {
                               maxlines: 2,
                               validator: BValidator.validate,
                               controller: formProvider.labNameController,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge!
+                                  .copyWith(
+                                    fontSize: 14,
+                                  ),
+                            ),
+                            const Gap(8),
+                            const TextAboveFormFieldWidget(
+                              text: "Email",
+                            ),
+
+                            TextfieldWidget(
+                              hintText: 'Enter Laboratory Email',
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) => EmailValidator.validate(
+                                      formProvider.emailController.text)
+                                  ? null
+                                  : "Please enter valid email",
+                              controller: formProvider.emailController,
                               style: Theme.of(context)
                                   .textTheme
                                   .labelLarge!

@@ -27,9 +27,9 @@ import '../../features/authenthication/infrastrucure/i_auth_impl.dart' as _i19;
 import '../../features/lab_request_userside/application/provider/lab_orders_provider.dart'
     as _i30;
 import '../../features/lab_request_userside/domain/facade/i_lab_orders_facade.dart'
-    as _i16;
+    as _i15;
 import '../../features/lab_request_userside/infrastructure/i_lab_orders_impl.dart'
-    as _i17;
+    as _i16;
 import '../../features/laboratory_banner/application/add_banner_provider.dart'
     as _i34;
 import '../../features/laboratory_banner/domain/i_banner_facade.dart' as _i25;
@@ -51,7 +51,7 @@ import '../../features/pending_page/domain/i_pending_facade.dart' as _i22;
 import '../../features/pending_page/infrastrucuture/i_pending_impl.dart'
     as _i23;
 import '../../features/tests_screen/application/provider/test_provider.dart'
-    as _i15;
+    as _i17;
 import '../../features/tests_screen/domain/facade/i_test_facade.dart' as _i11;
 import '../../features/tests_screen/infrastructure/i_test_impl.dart' as _i12;
 import '../services/image_picker.dart' as _i7;
@@ -94,10 +94,12 @@ Future<_i1.GetIt> init(
       ));
   gh.lazySingleton<_i13.IProfileFacade>(
       () => _i14.IProfileImpl(gh<_i6.FirebaseFirestore>()));
-  gh.factory<_i15.TestProvider>(
-      () => _i15.TestProvider(gh<_i11.ITestFacade>()));
-  gh.lazySingleton<_i16.ILabOrdersFacade>(
-      () => _i17.ILabOrdersImpl(gh<_i6.FirebaseFirestore>()));
+  gh.lazySingleton<_i15.ILabOrdersFacade>(() => _i16.ILabOrdersImpl(
+        gh<_i6.FirebaseFirestore>(),
+        gh<_i9.PdfPickerService>(),
+      ));
+  gh.factory<_i17.TestProvider>(
+      () => _i17.TestProvider(gh<_i11.ITestFacade>()));
   gh.lazySingleton<_i18.IAuthFacade>(() => _i19.IAuthImpl(
         gh<_i4.FirebaseAuth>(),
         gh<_i6.FirebaseFirestore>(),
@@ -122,7 +124,7 @@ Future<_i1.GetIt> init(
         gh<_i6.FirebaseFirestore>(),
       ));
   gh.factory<_i30.LabOrdersProvider>(
-      () => _i30.LabOrdersProvider(gh<_i16.ILabOrdersFacade>()));
+      () => _i30.LabOrdersProvider(gh<_i15.ILabOrdersFacade>()));
   gh.factory<_i31.PendingProvider>(
       () => _i31.PendingProvider(gh<_i22.IPendingFacade>()));
   gh.factory<_i32.LocationProvider>(

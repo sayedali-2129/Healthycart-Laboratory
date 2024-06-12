@@ -63,6 +63,7 @@ class LaboratoryFormProvider extends ChangeNotifier {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController ownerNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   List<String> keywordLabBuider() {
     return keywordsBuilder(labNameController.text);
@@ -87,6 +88,7 @@ class LaboratoryFormProvider extends ChangeNotifier {
         image: imageUrl,
         id: laboratoryId,
         requested: 1,
+        email: emailController.text,
         isActive: true);
 
     final result = await _iFormFeildFacade.addLaboratoryDetails(
@@ -187,6 +189,7 @@ class LaboratoryFormProvider extends ChangeNotifier {
     ownerNameController.text = labDetailsEdit.ownerName ?? '';
     pdfUrl = labDetailsEdit.uploadLicense;
     imageUrl = labDetailsEdit.image;
+    emailController.text = labDetailsEdit.email ?? '';
     notifyListeners();
   }
 
@@ -202,6 +205,7 @@ class LaboratoryFormProvider extends ChangeNotifier {
       ownerName: ownerNameController.text,
       uploadLicense: pdfUrl,
       image: imageUrl,
+      email: emailController.text,
     );
 
     final result = await _iFormFeildFacade.updateLaboratoryForm(

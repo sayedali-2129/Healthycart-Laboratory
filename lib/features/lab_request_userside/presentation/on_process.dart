@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:healthy_cart_laboratory/core/custom/custom_button_n_search/button_widget.dart';
 import 'package:healthy_cart_laboratory/core/custom/no_data_widget.dart';
-import 'package:healthy_cart_laboratory/core/general/cached_network_image.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/application/authenication_provider.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/application/provider/lab_orders_provider.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/new_request.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/widgets/on_process_address.dart';
+import 'package:healthy_cart_laboratory/features/lab_request_userside/presentation/widgets/selected_test_list.dart';
 import 'package:healthy_cart_laboratory/utils/constants/colors/colors.dart';
 import 'package:healthy_cart_laboratory/utils/constants/image/icon.dart';
+import 'package:healthy_cart_laboratory/utils/constants/image/image.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -117,49 +118,15 @@ class _OnProcessState extends State<OnProcess> {
                                       .selectedTest!
                                       .length,
                                   itemBuilder: (context, testIndex) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            ///// IMAGE CIRCLE /////
-                                            Container(
-                                              clipBehavior: Clip.antiAlias,
-                                              width: 55,
-                                              height: 55,
-                                              decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.amber),
-                                              child: CustomCachedNetworkImage(
-                                                  image: ordersProvider
-                                                      .onProcessOrderList[index]
-                                                      .selectedTest![testIndex]
-                                                      .testImage!),
-                                            ),
-                                            const Gap(8),
-                                            Text(
-                                              ordersProvider
-                                                  .onProcessOrderList[index]
-                                                  .selectedTest![testIndex]
-                                                  .testName!,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .copyWith(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
+                                    return SelectedTestsCard(
+                                        image: ordersProvider
+                                            .onProcessOrderList[index]
+                                            .selectedTest![testIndex]
+                                            .testImage!,
+                                        testName: ordersProvider
+                                            .onProcessOrderList[index]
+                                            .selectedTest![testIndex]
+                                            .testName!);
                                   },
                                 ),
                                 const Gap(10),
@@ -219,39 +186,67 @@ class _OnProcessState extends State<OnProcess> {
                                                 gap: 12),
                                           ],
                                         ),
-                                        Container(
-                                          height: 70,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            color: BColors.white,
-                                          ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(4),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Image.asset(
-                                                    BIcon.uploadPng,
-                                                    scale: 5,
+                                        ordersProvider.onProcessOrderList[index]
+                                                    .resultUrl !=
+                                                null
+                                            ? Image.asset(
+                                                BImage.imagePDF,
+                                                scale: 7,
+                                              )
+                                            : GestureDetector(
+                                                onTap: () async {
+                                                  await ordersProvider.getPDF(
+                                                      context: context);
+
+                                                  await ordersProvider
+                                                      .updateResult(
+                                                    orderId: ordersProvider
+                                                        .onProcessOrderList[
+                                                            index]
+                                                        .id!,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Container(
+                                                  height: 70,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    color: BColors.white,
                                                   ),
-                                                  Text(
-                                                    'Upload Result',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .labelLarge!
-                                                        .copyWith(
-                                                          fontSize: 12,
-                                                          color: BColors.black,
-                                                        ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        )
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              4),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Image.asset(
+                                                            BIcon.uploadPng,
+                                                            scale: 5,
+                                                          ),
+                                                          Text(
+                                                            'Upload Result',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .labelLarge!
+                                                                .copyWith(
+                                                                  fontSize: 12,
+                                                                  color: BColors
+                                                                      .black,
+                                                                ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
                                       ],
                                     ),
                                   ),
@@ -259,10 +254,21 @@ class _OnProcessState extends State<OnProcess> {
                                 const Gap(8),
                                 ordersProvider.onProcessOrderList[index]
                                             .testMode ==
+                                        'Home'
+                                    ? Text(
+                                        'Time Slot : ${ordersProvider.onProcessOrderList[index].timeSlot}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(fontSize: 15))
+                                    : const Gap(0),
+                                const Gap(8),
+                                ordersProvider.onProcessOrderList[index]
+                                            .testMode ==
                                         'Lab'
                                     ? const Gap(0)
                                     : OnProcessAddress(index: index),
-                                const Gap(8),
+                                const Gap(5),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -277,6 +283,50 @@ class _OnProcessState extends State<OnProcess> {
                                               .bodyLarge!
                                               .copyWith(fontSize: 15),
                                         ),
+                                        const Gap(5),
+                                        ordersProvider.onProcessOrderList[index]
+                                                    .testMode ==
+                                                'Home'
+                                            ? RichText(
+                                                text: TextSpan(
+                                                  text: 'Door Step Charge : ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(fontSize: 15),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: ordersProvider
+                                                                      .onProcessOrderList[
+                                                                          index]
+                                                                      .doorStepCharge ==
+                                                                  0 ||
+                                                              ordersProvider
+                                                                      .onProcessOrderList[
+                                                                          index]
+                                                                      .doorStepCharge ==
+                                                                  null
+                                                          ? 'Free Service'
+                                                          : '₹${ordersProvider.onProcessOrderList[index].doorStepCharge}',
+                                                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                                          fontSize: 15,
+                                                          color: ordersProvider
+                                                                          .onProcessOrderList[
+                                                                              index]
+                                                                          .doorStepCharge ==
+                                                                      0 ||
+                                                                  ordersProvider
+                                                                          .onProcessOrderList[
+                                                                              index]
+                                                                          .doorStepCharge ==
+                                                                      null
+                                                              ? BColors.green
+                                                              : BColors.black),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            : const Gap(0),
                                         const Gap(5),
                                         Text(
                                           'Total Amount : ₹${ordersProvider.onProcessOrderList[index].finalAmount}',

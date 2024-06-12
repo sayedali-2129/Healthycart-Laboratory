@@ -16,6 +16,8 @@ class LaboratoryModel {
   int? requested;
   String? rejectionReason;
   List<String>? keywords;
+  String? fcmToken;
+  String? email;
   LaboratoryModel({
     this.id,
     this.placemark,
@@ -31,6 +33,8 @@ class LaboratoryModel {
     this.requested,
     this.rejectionReason,
     this.keywords,
+    this.fcmToken,
+    this.email,
   });
 
   Map<String, dynamic> toMap() {
@@ -49,6 +53,8 @@ class LaboratoryModel {
       'requested': requested,
       'rejectionReason': rejectionReason,
       'keywords': keywords,
+      'fcmToken': fcmToken,
+      'email': email,
     };
   }
 
@@ -60,6 +66,7 @@ class LaboratoryModel {
       'uploadLicense': uploadLicense,
       'image': image,
       'keywords': keywords,
+      'email': email,
     };
   }
 
@@ -90,6 +97,8 @@ class LaboratoryModel {
       keywords: map['keywords'] != null
           ? List<String>.from((map['keywords'] as List<dynamic>))
           : null,
+      fcmToken: map['fcmToken'] != null ? map['fcmToken'] as String : null,
+      email: map['email'] != null ? map['email'] as String : null,
     );
   }
 
@@ -108,6 +117,8 @@ class LaboratoryModel {
     int? requested,
     String? rejectionReason,
     List<String>? keywords,
+    String? fcmToken,
+    String? email,
   }) {
     return LaboratoryModel(
       id: id ?? this.id,
@@ -124,6 +135,8 @@ class LaboratoryModel {
       requested: requested ?? this.requested,
       rejectionReason: rejectionReason ?? this.rejectionReason,
       keywords: keywords ?? this.keywords,
+      fcmToken: fcmToken ?? this.fcmToken,
+      email: email ?? this.email,
     );
   }
 }
