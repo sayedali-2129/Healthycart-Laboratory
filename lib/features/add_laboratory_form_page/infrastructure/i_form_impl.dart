@@ -90,7 +90,8 @@ class IFormFieldImpl implements IFormFeildFacade {
   FutureResult<String?> savePDF({
     required File pdfFile,
   }) async {
-    return await _pdfService.uploadPdf(pdfFile: pdfFile);
+    return await _pdfService.uploadPdf(
+        pdfFile: pdfFile, folderName: 'laboratory_pdf');
   }
 
   @override

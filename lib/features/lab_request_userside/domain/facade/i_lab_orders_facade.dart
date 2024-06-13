@@ -20,6 +20,8 @@ abstract class ILabOrdersFacade {
     required String labId,
   });
   FutureResult<List<LabOrdersModel>> getRejectedOrders({required String labId});
+  FutureResult<List<LabOrdersModel>> getCompletedOrders(
+      {required String labId});
   FutureResult<String> setTimeSlot(
       {required String orderId, required String dateAndTime});
   FutureResult<File> getPDF();
@@ -32,5 +34,6 @@ abstract class ILabOrdersFacade {
   FutureResult<String> uploadPdfReport(
       {required String orderId, required String pdfUrl});
 
-  void clearData();
+  void clearDataRejected();
+  void clearDataCompleted();
 }

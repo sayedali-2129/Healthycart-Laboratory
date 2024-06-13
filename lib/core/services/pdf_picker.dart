@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -33,11 +34,10 @@ class PdfPickerService {
     }
   }
 
-  FutureResult<String?> uploadPdf({
-    required File pdfFile,
-  }) async {
+  FutureResult<String?> uploadPdf(
+      {required File pdfFile, required String folderName}) async {
     final String pdfName =
-        'hospital_pdf/${DateTime.now().microsecondsSinceEpoch}.pdf';
+        '$folderName/${DateTime.now().microsecondsSinceEpoch}.pdf';
     final String? downloadPdfUrl;
     try {
       await _storage

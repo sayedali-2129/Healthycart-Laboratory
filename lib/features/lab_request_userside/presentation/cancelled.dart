@@ -27,11 +27,11 @@ class _CancelledState extends State<Cancelled> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         ordersProvider
-          ..clearData()
+          ..clearDataRejected()
           ..getRejectedOrders(labId: authProvider.labFetchlDataFetched!.id!);
       },
     );
-    ordersProvider.init(
+    ordersProvider.rejectInit(
         scrollController, authProvider.labFetchlDataFetched!.id!);
     super.initState();
   }

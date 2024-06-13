@@ -21,8 +21,10 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   StreamSubscription? newOrderSubscription;
   StreamSubscription? onProcessOrderSubscription;
 
-  DocumentSnapshot<Map<String, dynamic>>? lastDoc;
-  bool noMoreData = false;
+  DocumentSnapshot<Map<String, dynamic>>? rejectedLastDoc;
+  DocumentSnapshot<Map<String, dynamic>>? completedLastDoc;
+  bool noMoreDataRejected = false;
+  bool noMoreDataCompleted = false;
 
   StreamController<Either<MainFailure, List<LabOrdersModel>>>
       newOrderStreamController =
@@ -156,7 +158,7 @@ class ILabOrdersImpl implements ILabOrdersFacade {
         await _firestore
             .collection(FirebaseCollections.userOrdersCollection)
             .doc(orderId)
-            .update({'orderStatus': 2});
+            .update({'orderStatus': 2, 'completedAt': Timestamp.now()});
         return right('Order Completed successfully');
         /* ----------------------------- REJECT ORDER ----------------------------- */
       } else if (orderStatus == 3) {
@@ -181,7 +183,7 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   @override
   FutureResult<List<LabOrdersModel>> getRejectedOrders(
       {required String labId}) async {
-    if (noMoreData) return right([]);
+    if (noMoreDataRejected) return right([]);
     try {
       Query query = _firestore
           .collection(FirebaseCollections.userOrdersCollection)
@@ -189,14 +191,15 @@ class ILabOrdersImpl implements ILabOrdersFacade {
           .where('orderStatus', isEqualTo: 3)
           .orderBy('rejectedAt', descending: true);
 
-      if (lastDoc != null) {
-        query = query.startAfterDocument(lastDoc!);
+      if (rejectedLastDoc != null) {
+        query = query.startAfterDocument(rejectedLastDoc!);
       }
       final snapshot = await query.limit(4).get();
       if (snapshot.docs.length < 4 || snapshot.docs.isEmpty) {
-        noMoreData = true;
+        noMoreDataRejected = true;
       } else {
-        lastDoc = snapshot.docs.last as DocumentSnapshot<Map<String, dynamic>>;
+        rejectedLastDoc =
+            snapshot.docs.last as DocumentSnapshot<Map<String, dynamic>>;
       }
       final rejectedOrderList = snapshot.docs
           .map((e) => LabOrdersModel.fromMap(e.data() as Map<String, dynamic>)
@@ -204,6 +207,37 @@ class ILabOrdersImpl implements ILabOrdersFacade {
           .toList();
 
       return right(rejectedOrderList);
+    } catch (e) {
+      return left(MainFailure.generalException(errMsg: e.toString()));
+    }
+  }
+
+  /* -------------------------- GET COMPLETED ORDERS -------------------------- */
+  @override
+  FutureResult<List<LabOrdersModel>> getCompletedOrders(
+      {required String labId}) async {
+    try {
+      Query query = _firestore
+          .collection(FirebaseCollections.userOrdersCollection)
+          .where('labId', isEqualTo: labId)
+          .where('orderStatus', isEqualTo: 2)
+          .orderBy('completedAt', descending: true);
+
+      if (completedLastDoc != null) {
+        query = query.startAfterDocument(completedLastDoc!);
+      }
+      final snapshot = await query.limit(5).get();
+      if (snapshot.docs.length < 5 || snapshot.docs.isEmpty) {
+        noMoreDataCompleted = true;
+      } else {
+        completedLastDoc =
+            snapshot.docs.last as DocumentSnapshot<Map<String, dynamic>>;
+      }
+
+      return right(snapshot.docs
+          .map((e) => LabOrdersModel.fromMap(e.data() as Map<String, dynamic>)
+              .copyWith(id: e.id))
+          .toList());
     } catch (e) {
       return left(MainFailure.generalException(errMsg: e.toString()));
     }
@@ -219,7 +253,8 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   FutureResult<String?> savePDF({
     required File pdfFile,
   }) async {
-    return await _pdfService.uploadPdf(pdfFile: pdfFile);
+    return await _pdfService.uploadPdf(
+        pdfFile: pdfFile, folderName: 'lab_result_pdf');
   }
 
   @override
@@ -233,7 +268,7 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   FutureResult<String> uploadPdfReport(
       {required String orderId, required String pdfUrl}) async {
     try {
-      log('called');
+      log('called impl');
       await _firestore
           .collection(FirebaseCollections.userOrdersCollection)
           .doc(orderId)
@@ -247,8 +282,14 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   /* -------------------------------------------------------------------------- */
 
   @override
-  void clearData() {
-    lastDoc = null;
-    noMoreData = false;
+  void clearDataRejected() {
+    rejectedLastDoc = null;
+    noMoreDataRejected = false;
+  }
+
+  @override
+  void clearDataCompleted() {
+    completedLastDoc = null;
+    noMoreDataCompleted = false;
   }
 }

@@ -1,13 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:healthy_cart_laboratory/core/custom/lottie/loading_lottie.dart';
 import 'package:healthy_cart_laboratory/core/custom/toast/toast.dart';
-import 'package:healthy_cart_laboratory/core/failures/main_failure.dart';
-import 'package:healthy_cart_laboratory/core/general/typdef.dart';
-import 'package:healthy_cart_laboratory/core/services/easy_navigation.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/domain/facade/i_lab_orders_facade.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/domain/models/lab_orders_model.dart';
 import 'package:injectable/injectable.dart';
@@ -24,8 +19,10 @@ class LabOrdersProvider with ChangeNotifier {
   List<LabOrdersModel> newOrderList = [];
   List<LabOrdersModel> onProcessOrderList = [];
   List<LabOrdersModel> rejectedOrderList = [];
+  List<LabOrdersModel> completedOrderList = [];
 
-  Set<String> orderIds = {};
+  Set<String> newOrderListIds = {};
+  Set<String> onProcessOrderListIds = {};
 
   final deliveryChargeController = TextEditingController();
   final rejectionController = TextEditingController();
@@ -46,13 +43,26 @@ class LabOrdersProvider with ChangeNotifier {
 
 /* ------------------------------ FETCH ORDERS ------------------------------ */
   void getNewOrders({required String labId}) {
+    isLoading = true;
+    notifyListeners();
     ilabOrdersFacade.getLabOrders(labId: labId).listen((event) {
       event.fold(
         (err) {
           CustomToast.errorToast(text: err.errMsg);
+          isLoading = false;
+          notifyListeners();
         },
         (newOrders) {
-          newOrderList = newOrders;
+          final uniqueOrders = newOrders
+              .where(
+                (orders) => !newOrderListIds.contains(orders.id),
+              )
+              .toList();
+          newOrderListIds.addAll(uniqueOrders.map((orders) => orders.id!));
+          (orders) => !onProcessOrderListIds.contains(orders.id);
+          newOrderList.addAll(uniqueOrders);
+
+          isLoading = false;
           notifyListeners();
         },
       );
@@ -73,8 +83,15 @@ class LabOrdersProvider with ChangeNotifier {
           notifyListeners();
         },
         (onProcessOrders) {
-          onProcessOrderList = onProcessOrders;
-          log(onProcessOrderList.length.toString());
+          final uniqueOrders = onProcessOrders
+              .where(
+                (orders) => !onProcessOrderListIds.contains(orders.id),
+              )
+              .toList();
+          onProcessOrderListIds
+              .addAll(uniqueOrders.map((orders) => orders.id!));
+
+          onProcessOrderList.addAll(uniqueOrders);
           isLoading = false;
           notifyListeners();
         },
@@ -92,13 +109,7 @@ class LabOrdersProvider with ChangeNotifier {
         log('Error in getRejectedOrders() :: ${err.errMsg}');
       },
       (rejectedOrders) {
-        final uniqueOrders = rejectedOrders
-            .where(
-              (orders) => !orderIds.contains(orders.id),
-            )
-            .toList();
-        orderIds.addAll(uniqueOrders.map((orders) => orders.id!));
-        rejectedOrderList.addAll(uniqueOrders);
+        rejectedOrderList = rejectedOrders;
         notifyListeners();
       },
     );
@@ -106,15 +117,47 @@ class LabOrdersProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /* -------------------------- GET COMPLETED ORDERS -------------------------- */
+  Future<void> getCompletedOrders({required String labId}) async {
+    isLoading = true;
+    notifyListeners();
+    final result = await ilabOrdersFacade.getCompletedOrders(labId: labId);
+    result.fold((err) {
+      log('error in getCompletedOrders() :: ${err.errMsg}');
+    }, (completedOrders) {
+      completedOrderList = completedOrders;
+    });
+    isLoading = false;
+    notifyListeners();
+  }
+
   /* ------------------------------- CLEAR DATA ------------------------------- */
-  void clearData() {
-    ilabOrdersFacade.clearData();
-    orderIds.clear();
+  void clearDataRejected() {
+    ilabOrdersFacade.clearDataRejected();
+
     rejectedOrderList = [];
     notifyListeners();
   }
 
-  void init(ScrollController scrollController, String labId) {
+  void cleatDataCompleted() {
+    ilabOrdersFacade.clearDataCompleted();
+    completedOrderList = [];
+    notifyListeners();
+  }
+
+  void completeInit(ScrollController scrollController, String labId) {
+    scrollController.addListener(
+      () {
+        if (scrollController.position.atEdge &&
+            scrollController.position.pixels != 0 &&
+            isLoading == false) {
+          getCompletedOrders(labId: labId);
+        }
+      },
+    );
+  }
+
+  void rejectInit(ScrollController scrollController, String labId) {
     scrollController.addListener(
       () {
         if (scrollController.position.atEdge &&
@@ -232,68 +275,35 @@ class LabOrdersProvider with ChangeNotifier {
   File? pdfFile;
   String? pdfUrl;
 
-  Future<void> getPDF({required BuildContext context}) async {
+  Future<void> pickPdfFile() async {
     final result = await ilabOrdersFacade.getPDF();
-    result.fold((failure) {
-      CustomToast.errorToast(text: failure.errMsg);
-      notifyListeners();
-    }, (pdfFileSucess) async {
-      pdfUrl = null;
-
-      pdfFile = pdfFileSucess;
-      LoadingLottie.showLoading(context: context, text: 'Adding PDF...');
-      await savePDF().then((value) {
-        // save PDF function is called here......
-        value.fold((failure) {
-          EasyNavigation.pop(context: context);
-          notifyListeners();
-          return CustomToast.errorToast(text: failure.errMsg);
-        }, (pdfUrlSucess) {
-          pdfUrl = pdfUrlSucess;
-          log(pdfUrl ?? 'null');
-
-          notifyListeners();
-        });
-      });
+    result.fold((err) {
+      CustomToast.errorToast(text: err.errMsg);
+    }, (success) {
+      pdfFile = success;
     });
+    notifyListeners();
   }
 
-  FutureResult<String?> savePDF() async {
-    if (pdfFile == null) {
-      return left(const MainFailure.generalException(
-          errMsg: 'Please check the file selected.'));
-    }
+  Future<void> savePdf() async {
     final result = await ilabOrdersFacade.savePDF(pdfFile: pdfFile!);
-    return result;
-  }
-
-  Future<void> deletePDF() async {
-    if ((pdfUrl ?? '').isEmpty) {
-      pdfFile = null;
-      pdfUrl = null;
-      CustomToast.errorToast(text: 'PDF removed.');
-      notifyListeners();
-      return;
-    }
-    final result = await ilabOrdersFacade.deletePDF(pdfUrl: pdfUrl!);
-    result.fold((failure) {
-      CustomToast.errorToast(text: failure.errMsg);
-      notifyListeners();
-    }, (sucess) {
-      pdfFile = null;
-      pdfUrl = null;
-      CustomToast.sucessToast(text: sucess!);
-      notifyListeners();
+    result.fold((err) {
+      CustomToast.errorToast(text: err.errMsg);
+    }, (success) {
+      pdfUrl = success;
     });
   }
 
   Future<void> updateResult({required String orderId}) async {
+    log('called provider');
     final result = await ilabOrdersFacade.uploadPdfReport(
         orderId: orderId, pdfUrl: pdfUrl!);
     result.fold((err) {
       CustomToast.errorToast(text: err.errMsg);
     }, (success) {
       CustomToast.sucessToast(text: success);
+      pdfFile = null;
+      pdfUrl = null;
     });
     notifyListeners();
   }
