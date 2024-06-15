@@ -224,90 +224,87 @@ class _NewRequestState extends State<NewRequest> {
 
                               if (ordersProvider.newOrderList[index].testMode ==
                                   'Home')
-                                ordersProvider.newOrderList[index].timeSlot ==
-                                        null
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          ButtonWidget(
-                                            buttonHeight: 42,
-                                            buttonWidth: 180,
-                                            buttonColor: BColors.darkblue,
-                                            buttonWidget: const Text(
-                                              'Select Date & Time',
-                                              style: TextStyle(
-                                                  color: BColors.white,
-                                                  fontSize: 12),
-                                            ),
-                                            onPressed: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      DateAndTimePick(
-                                                        onSave: () {
-                                                          if (ordersProvider.selectedTimeSlot1 != null &&
-                                                              ordersProvider
-                                                                      .selectedTimeSlot2 !=
-                                                                  null &&
-                                                              ordersProvider
-                                                                  .dateController
-                                                                  .text
-                                                                  .isNotEmpty) {
-                                                            ordersProvider.setTimeSlot(
-                                                                orderId: ordersProvider
+                                if (ordersProvider
+                                        .newOrderList[index].timeSlot ==
+                                    null)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ButtonWidget(
+                                        buttonHeight: 42,
+                                        buttonWidth: 180,
+                                        buttonColor: BColors.darkblue,
+                                        buttonWidget: const Text(
+                                          'Select Date & Time',
+                                          style: TextStyle(
+                                              color: BColors.white,
+                                              fontSize: 12),
+                                        ),
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  DateAndTimePick(
+                                                    onSave: () {
+                                                      if (ordersProvider.selectedTimeSlot1 != null &&
+                                                          ordersProvider
+                                                                  .selectedTimeSlot2 !=
+                                                              null &&
+                                                          ordersProvider
+                                                              .dateController
+                                                              .text
+                                                              .isNotEmpty) {
+                                                        ordersProvider.setTimeSlot(
+                                                            orderId:
+                                                                ordersProvider
                                                                     .newOrderList[
                                                                         index]
                                                                     .id!,
-                                                                dateAndTime:
-                                                                    '${ordersProvider.dateController.text} - ${ordersProvider.selectedTimeSlot1} - ${ordersProvider.selectedTimeSlot2}');
-                                                            Navigator.pop(
-                                                                context);
-                                                          } else {
-                                                            CustomToast.errorToast(
-                                                                text:
-                                                                    'Please select date and time');
-                                                          }
-                                                        },
-                                                      ));
-                                            },
-                                          ),
-                                        ],
-                                      )
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                border: Border.all(width: 0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(8)),
-                                            child: Center(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8),
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      ordersProvider
-                                                              .newOrderList[
-                                                                  index]
-                                                              .timeSlot ??
-                                                          '',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium!
-                                                          .copyWith(
-                                                              color:
-                                                                  Colors.black),
-                                                    ),
-                                                    const Gap(8),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) =>
+                                                            dateAndTime:
+                                                                '${ordersProvider.dateController.text} - ${ordersProvider.selectedTimeSlot1} - ${ordersProvider.selectedTimeSlot2}');
+                                                        Navigator.pop(context);
+                                                      } else {
+                                                        CustomToast.errorToast(
+                                                            text:
+                                                                'Please select date and time');
+                                                      }
+                                                    },
+                                                  ));
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                else
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            border: Border.all(width: 0.5),
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
+                                        child: Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  ordersProvider
+                                                      .newOrderList[index]
+                                                      .timeSlot!,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                          color: Colors.black),
+                                                ),
+                                                const Gap(8),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder:
+                                                            (context) =>
                                                                 DateAndTimePick(
                                                                   onSave: () {
                                                                     if (ordersProvider.selectedTimeSlot1 != null &&
@@ -333,20 +330,20 @@ class _NewRequestState extends State<NewRequest> {
                                                                     }
                                                                   },
                                                                 ));
-                                                      },
-                                                      child: const Icon(
-                                                        Icons.edit_outlined,
-                                                        color: BColors.black,
-                                                        size: 20,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
+                                                  },
+                                                  child: const Icon(
+                                                    Icons.edit_outlined,
+                                                    color: BColors.black,
+                                                    size: 20,
+                                                  ),
+                                                )
+                                              ],
                                             ),
                                           ),
-                                        ],
+                                        ),
                                       ),
+                                    ],
+                                  ),
 
                               /* -------------------------------------------------------------------------- */
                               const Gap(12),

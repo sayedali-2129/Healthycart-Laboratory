@@ -191,21 +191,25 @@ class _CancelledState extends State<Cancelled> {
                                     .copyWith(color: BColors.red),
                               ),
                               const Gap(8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                        'Reject Reason : ${rejectedOrders.rejectReason ?? 'Not Provided'}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelLarge!
-                                            .copyWith(
-                                                color: BColors.black,
-                                                fontWeight: FontWeight.w500)),
-                                  ),
-                                ],
-                              ),
+                              rejectedOrders.rejectReason == null
+                                  ? const Gap(0)
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                              'Reject Reason : ${rejectedOrders.rejectReason ?? 'Not Provided'}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelLarge!
+                                                  .copyWith(
+                                                      color: BColors.black,
+                                                      fontWeight:
+                                                          FontWeight.w500)),
+                                        ),
+                                      ],
+                                    ),
                             ],
                           ),
                         ));

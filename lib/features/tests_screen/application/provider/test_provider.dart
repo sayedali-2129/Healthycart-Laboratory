@@ -17,6 +17,7 @@ class TestProvider with ChangeNotifier {
   String? imageUrl;
   TestModel? testModel;
   bool isDoorStepAvailable = false;
+  bool needPrescription = false;
   List<TestModel> testList = [];
   bool labFetchLoading = false;
 
@@ -25,8 +26,13 @@ class TestProvider with ChangeNotifier {
   final offerPriceController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  void checkBox() {
+  void doorStepcheckBox() {
     isDoorStepAvailable = !isDoorStepAvailable;
+    notifyListeners();
+  }
+
+  void prescriptioncheckBox() {
+    needPrescription = !needPrescription;
     notifyListeners();
   }
 
@@ -81,7 +87,8 @@ class TestProvider with ChangeNotifier {
         testPrice: num.tryParse(priceController.text),
         testImage: imageUrl,
         testName: testNameController.text,
-        isDoorstepAvailable: isDoorStepAvailable);
+        isDoorstepAvailable: isDoorStepAvailable,
+        prescriptionNeeded: needPrescription);
 
     final result = await iTestFacade.addNewTest(testModel: testModelAdd);
     result.fold(
@@ -95,6 +102,7 @@ class TestProvider with ChangeNotifier {
         clearImages();
         clearFields();
         isDoorStepAvailable = false;
+        needPrescription = false;
       },
     );
 
@@ -142,7 +150,8 @@ class TestProvider with ChangeNotifier {
         testPrice: num.tryParse(priceController.text),
         testImage: imageUrl,
         testName: testNameController.text,
-        isDoorstepAvailable: isDoorStepAvailable);
+        isDoorstepAvailable: isDoorStepAvailable,
+        prescriptionNeeded: needPrescription);
 
     final result =
         await iTestFacade.editTest(testId: testId, testModel: testModel);
@@ -163,8 +172,9 @@ class TestProvider with ChangeNotifier {
     testNameController.text = editData.testName!;
     imageUrl = editData.testImage;
     priceController.text = editData.testPrice.toString();
-    isDoorStepAvailable = editData.isDoorstepAvailable!;
-    offerPriceController.text = editData.offerPrice.toString();
+    isDoorStepAvailable = editData.isDoorstepAvailable ?? false;
+    needPrescription = editData.prescriptionNeeded ?? false;
+    offerPriceController.text = '${editData.offerPrice ?? ''}';
     notifyListeners();
   }
 }

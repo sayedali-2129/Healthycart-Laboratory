@@ -140,6 +140,7 @@ class ILabOrdersImpl implements ILabOrdersFacade {
           {
             'orderStatus': 1,
             'acceptedAt': Timestamp.now(),
+            'isUserAccepted': false,
           },
         );
         if (finalAmount == 0) {

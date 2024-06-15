@@ -9,6 +9,7 @@ class TestModel {
   num? offerPrice;
   Timestamp? createdAt;
   bool? isDoorstepAvailable;
+  bool? prescriptionNeeded;
   TestModel({
     this.id,
     this.labId,
@@ -18,6 +19,7 @@ class TestModel {
     this.offerPrice,
     this.createdAt,
     this.isDoorstepAvailable,
+    this.prescriptionNeeded,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class TestModel {
       'offerPrice': offerPrice,
       'createdAt': createdAt,
       'isDoorstepAvailable': isDoorstepAvailable,
+      'prescriptionNeeded': prescriptionNeeded,
     };
   }
 
@@ -46,6 +49,9 @@ class TestModel {
       isDoorstepAvailable: map['isDoorstepAvailable'] != null
           ? map['isDoorstepAvailable'] as bool
           : null,
+      prescriptionNeeded: map['prescriptionNeeded'] != null
+          ? map['prescriptionNeeded'] as bool
+          : null,
     );
   }
 
@@ -58,6 +64,7 @@ class TestModel {
     num? offerPrice,
     Timestamp? createdAt,
     bool? isDoorstepAvailable,
+    bool? prescriptionNeeded,
   }) {
     return TestModel(
       id: id ?? this.id,
@@ -68,6 +75,7 @@ class TestModel {
       offerPrice: offerPrice ?? this.offerPrice,
       createdAt: createdAt ?? this.createdAt,
       isDoorstepAvailable: isDoorstepAvailable ?? this.isDoorstepAvailable,
+      prescriptionNeeded: prescriptionNeeded ?? this.prescriptionNeeded,
     );
   }
 }

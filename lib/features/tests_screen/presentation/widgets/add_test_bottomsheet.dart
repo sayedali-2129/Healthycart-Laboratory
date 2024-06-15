@@ -55,6 +55,7 @@ class _TestAddBottomSheetState extends State<TestAddBottomSheet> {
           testProvider.clearImages();
           testProvider.clearFields();
           testProvider.isDoorStepAvailable = false;
+          testProvider.needPrescription = false;
         },
         child: GestureDetector(
           onTap: () {
@@ -134,7 +135,7 @@ class _TestAddBottomSheetState extends State<TestAddBottomSheet> {
                             Row(
                               children: [
                                 Text(
-                                  'Door Step Available : ',
+                                  'Door Step Available? : ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -143,7 +144,24 @@ class _TestAddBottomSheetState extends State<TestAddBottomSheet> {
                                 Checkbox(
                                   value: testProvider.isDoorStepAvailable,
                                   onChanged: (value) {
-                                    testProvider.checkBox();
+                                    testProvider.doorStepcheckBox();
+                                  },
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'Prescription Needed? : ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: BColors.black),
+                                ),
+                                Checkbox(
+                                  value: testProvider.needPrescription,
+                                  onChanged: (value) {
+                                    testProvider.prescriptioncheckBox();
                                   },
                                 ),
                               ],

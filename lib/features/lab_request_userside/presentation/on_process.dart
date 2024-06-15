@@ -510,6 +510,38 @@ class _OnProcessState extends State<OnProcess> {
                                         ],
                                       ),
                                     ),
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'User Status : ',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(fontSize: 15),
+                                        children: [
+                                          TextSpan(
+                                            text: ordersProvider
+                                                        .onProcessOrderList[
+                                                            index]
+                                                        .isUserAccepted ==
+                                                    false
+                                                ? 'Pending'
+                                                : 'Accepted',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                    fontSize: 15,
+                                                    color: ordersProvider
+                                                                .onProcessOrderList[
+                                                                    index]
+                                                                .isUserAccepted ==
+                                                            false
+                                                        ? BColors.pendingColor
+                                                        : BColors.green),
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],

@@ -25,6 +25,7 @@ class LabOrdersModel {
   String? timeSlot;
   String? resultUrl;
   Timestamp? completedAt;
+  bool? isUserAccepted;
 
   LabOrdersModel({
     this.id,
@@ -48,6 +49,7 @@ class LabOrdersModel {
     this.timeSlot,
     this.resultUrl,
     this.completedAt,
+    this.isUserAccepted,
   });
 
   Map<String, dynamic> toMap() {
@@ -73,6 +75,7 @@ class LabOrdersModel {
       'timeSlot': timeSlot,
       'resultUrl': resultUrl,
       'completedAt': completedAt,
+      'isUserAccepted': isUserAccepted,
     };
   }
 
@@ -119,6 +122,8 @@ class LabOrdersModel {
       resultUrl: map['resultUrl'] != null ? map['resultUrl'] as String : null,
       completedAt:
           map['completedAt'] != null ? map['completedAt'] as Timestamp : null,
+      isUserAccepted:
+          map['isUserAccepted'] != null ? map['isUserAccepted'] as bool : null,
     );
   }
 
@@ -144,6 +149,7 @@ class LabOrdersModel {
     String? timeSlot,
     String? resultUrl,
     Timestamp? completedAt,
+    bool? isUserAccepted,
   }) {
     return LabOrdersModel(
       id: id ?? this.id,
@@ -167,6 +173,7 @@ class LabOrdersModel {
       timeSlot: timeSlot ?? this.timeSlot,
       resultUrl: resultUrl ?? this.resultUrl,
       completedAt: completedAt ?? this.completedAt,
+      isUserAccepted: isUserAccepted ?? this.isUserAccepted,
     );
   }
 }

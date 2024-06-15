@@ -53,15 +53,15 @@ class LabOrdersProvider with ChangeNotifier {
           notifyListeners();
         },
         (newOrders) {
-          final uniqueOrders = newOrders
-              .where(
-                (orders) => !newOrderListIds.contains(orders.id),
-              )
-              .toList();
-          newOrderListIds.addAll(uniqueOrders.map((orders) => orders.id!));
-          (orders) => !onProcessOrderListIds.contains(orders.id);
-          newOrderList.addAll(uniqueOrders);
-
+          // final uniqueOrders = newOrders
+          //     .where(
+          //       (orders) => !newOrderListIds.contains(orders.id),
+          //     )
+          //     .toList();
+          // newOrderListIds.addAll(uniqueOrders.map((orders) => orders.id!));
+          // (orders) => !onProcessOrderListIds.contains(orders.id);
+          // newOrderList.addAll(uniqueOrders);
+          newOrderList = newOrders;
           isLoading = false;
           notifyListeners();
         },
@@ -83,15 +83,16 @@ class LabOrdersProvider with ChangeNotifier {
           notifyListeners();
         },
         (onProcessOrders) {
-          final uniqueOrders = onProcessOrders
-              .where(
-                (orders) => !onProcessOrderListIds.contains(orders.id),
-              )
-              .toList();
-          onProcessOrderListIds
-              .addAll(uniqueOrders.map((orders) => orders.id!));
+          // final uniqueOrders = onProcessOrders
+          //     .where(
+          //       (orders) => !onProcessOrderListIds.contains(orders.id),
+          //     )
+          //     .toList();
+          // onProcessOrderListIds
+          //     .addAll(uniqueOrders.map((orders) => orders.id!));
 
-          onProcessOrderList.addAll(uniqueOrders);
+          // onProcessOrderList.addAll(uniqueOrders);
+          onProcessOrderList = onProcessOrders;
           isLoading = false;
           notifyListeners();
         },
@@ -109,7 +110,7 @@ class LabOrdersProvider with ChangeNotifier {
         log('Error in getRejectedOrders() :: ${err.errMsg}');
       },
       (rejectedOrders) {
-        rejectedOrderList = rejectedOrders;
+        rejectedOrderList.addAll(rejectedOrders);
         notifyListeners();
       },
     );
@@ -125,7 +126,7 @@ class LabOrdersProvider with ChangeNotifier {
     result.fold((err) {
       log('error in getCompletedOrders() :: ${err.errMsg}');
     }, (completedOrders) {
-      completedOrderList = completedOrders;
+      completedOrderList.addAll(completedOrders);
     });
     isLoading = false;
     notifyListeners();
