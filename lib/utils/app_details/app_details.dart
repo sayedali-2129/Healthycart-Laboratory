@@ -8,7 +8,7 @@ class AppDetails {
   static const email = "";
   static const packageName = "";
   static const bundleID = "";
-  static const projectID = "";
+  static const projectID = "healthycart-4c697";
   static const appStoreID = "";
   static const appUrl = "";
   static const urlPrfix = "";

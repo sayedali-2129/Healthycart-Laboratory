@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:healthy_cart_laboratory/core/services/easy_navigation.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/application/authenication_provider.dart';
 import 'package:healthy_cart_laboratory/features/authenthication/presentation/login_ui.dart';
+import 'package:healthy_cart_laboratory/features/notifications/application/provider/notification_provider.dart';
 import 'package:healthy_cart_laboratory/utils/constants/image/image.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     final labId = FirebaseAuth.instance.currentUser?.uid;
+    final notiprovider = context.read<NotificationProvider>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      notiprovider.notificationPermission();
       if (labId != null) {
         context
             .read<AuthenticationProvider>()
