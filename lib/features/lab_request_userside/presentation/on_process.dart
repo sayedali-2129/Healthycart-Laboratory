@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:healthy_cart_laboratory/core/custom/confirm_alertbox/confirm_delete_widget.dart';
 import 'package:healthy_cart_laboratory/core/custom/custom_button_n_search/button_widget.dart';
 import 'package:healthy_cart_laboratory/core/custom/lottie/loading_indicater.dart';
 import 'package:healthy_cart_laboratory/core/custom/lottie/loading_lottie.dart';
@@ -378,177 +379,233 @@ class _OnProcessState extends State<OnProcess> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Test Mode : ${ordersProvider.onProcessOrderList[index].testMode}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(fontSize: 15),
-                                    ),
-                                    const Gap(5),
-                                    ordersProvider.onProcessOrderList[index]
-                                                .testMode ==
-                                            'Home'
-                                        ? RichText(
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Test Mode : ${ordersProvider.onProcessOrderList[index].testMode}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(fontSize: 14),
+                                      ),
+                                      const Gap(5),
+                                      ordersProvider.onProcessOrderList[index]
+                                                  .testMode ==
+                                              'Home'
+                                          ? RichText(
+                                              text: TextSpan(
+                                                text: 'Door Step Charge : ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge!
+                                                    .copyWith(fontSize: 14),
+                                                children: [
+                                                  TextSpan(
+                                                    text: ordersProvider
+                                                                    .onProcessOrderList[
+                                                                        index]
+                                                                    .doorStepCharge ==
+                                                                0 ||
+                                                            ordersProvider
+                                                                    .onProcessOrderList[
+                                                                        index]
+                                                                    .doorStepCharge ==
+                                                                null
+                                                        ? 'Free Service'
+                                                        : '₹${ordersProvider.onProcessOrderList[index].doorStepCharge}',
+                                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                                        fontSize: 15,
+                                                        color: ordersProvider
+                                                                        .onProcessOrderList[
+                                                                            index]
+                                                                        .doorStepCharge ==
+                                                                    0 ||
+                                                                ordersProvider
+                                                                        .onProcessOrderList[
+                                                                            index]
+                                                                        .doorStepCharge ==
+                                                                    null
+                                                            ? BColors.green
+                                                            : BColors.black),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : const Gap(0),
+                                      const Gap(5),
+                                      Text(
+                                        'Total Amount : ₹${ordersProvider.onProcessOrderList[index].finalAmount}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(fontSize: 14),
+                                      ),
+                                      const Gap(5),
+                                      ordersProvider.onProcessOrderList[index]
+                                                  .isUserAccepted ==
+                                              false
+                                          ? const Gap(0)
+                                          : RichText(
+                                              text: TextSpan(
+                                                text: 'Payment Mode : ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge!
+                                                    .copyWith(fontSize: 14),
+                                                children: [
+                                                  TextSpan(
+                                                    text: ordersProvider
+                                                            .onProcessOrderList[
+                                                                index]
+                                                            .paymentMethod ??
+                                                        'Pending',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color:
+                                                                BColors.green),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                      const Gap(5),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          RichText(
                                             text: TextSpan(
-                                              text: 'Door Step Charge : ',
+                                              text: 'Payment Status : ',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyLarge!
-                                                  .copyWith(fontSize: 15),
+                                                  .copyWith(fontSize: 14),
                                               children: [
                                                 TextSpan(
                                                   text: ordersProvider
-                                                                  .onProcessOrderList[
-                                                                      index]
-                                                                  .doorStepCharge ==
-                                                              0 ||
-                                                          ordersProvider
-                                                                  .onProcessOrderList[
-                                                                      index]
-                                                                  .doorStepCharge ==
-                                                              null
-                                                      ? 'Free Service'
-                                                      : '₹${ordersProvider.onProcessOrderList[index].doorStepCharge}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                          fontSize: 15,
-                                                          color: ordersProvider
-                                                                          .onProcessOrderList[
-                                                                              index]
-                                                                          .doorStepCharge ==
-                                                                      0 ||
-                                                                  ordersProvider
-                                                                          .onProcessOrderList[
-                                                                              index]
-                                                                          .doorStepCharge ==
-                                                                      null
-                                                              ? BColors.green
-                                                              : BColors.black),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        : const Gap(0),
-                                    const Gap(5),
-                                    Text(
-                                      'Total Amount : ₹${ordersProvider.onProcessOrderList[index].finalAmount}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(fontSize: 15),
-                                    ),
-                                    const Gap(5),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Payment Mode : ',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontSize: 15),
-                                        children: [
-                                          TextSpan(
-                                            text: 'COD',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(
-                                                    fontSize: 15,
-                                                    color: BColors.green),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const Gap(5),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Payment Status : ',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontSize: 15),
-                                        children: [
-                                          TextSpan(
-                                            text: ordersProvider
-                                                        .onProcessOrderList[
-                                                            index]
-                                                        .paymentStatus ==
-                                                    0
-                                                ? 'Pending'
-                                                : ordersProvider
-                                                            .onProcessOrderList[
-                                                                index]
-                                                            .paymentStatus ==
-                                                        1
-                                                    ? 'Completed'
-                                                    : 'Cancelled',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(
-                                                  fontSize: 15,
-                                                  color: ordersProvider
                                                               .onProcessOrderList[
                                                                   index]
                                                               .paymentStatus ==
                                                           0
-                                                      ? BColors.pendingColor
+                                                      ? 'Pending'
                                                       : ordersProvider
                                                                   .onProcessOrderList[
                                                                       index]
                                                                   .paymentStatus ==
                                                               1
-                                                          ? BColors.green
-                                                          : BColors.red,
-                                                ),
-                                          )
+                                                          ? 'Completed'
+                                                          : 'Cancelled',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                        fontSize: 14,
+                                                        color: ordersProvider
+                                                                    .onProcessOrderList[
+                                                                        index]
+                                                                    .paymentStatus ==
+                                                                0
+                                                            ? BColors
+                                                                .pendingColor
+                                                            : ordersProvider
+                                                                        .onProcessOrderList[
+                                                                            index]
+                                                                        .paymentStatus ==
+                                                                    1
+                                                                ? BColors.green
+                                                                : BColors.red,
+                                                      ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          ordersProvider
+                                                          .onProcessOrderList[
+                                                              index]
+                                                          .paymentMethod ==
+                                                      'Doorstep Payment' &&
+                                                  ordersProvider
+                                                          .onProcessOrderList[
+                                                              index]
+                                                          .paymentStatus ==
+                                                      0
+                                              ? GestureDetector(
+                                                  onTap: () {
+                                                    ConfirmAlertBoxWidget
+                                                        .showAlertConfirmBox(
+                                                            context: context,
+                                                            confirmButtonTap:
+                                                                () {
+                                                              ordersProvider.updatePaymentStatus(
+                                                                  orderId: ordersProvider
+                                                                      .onProcessOrderList[
+                                                                          index]
+                                                                      .id!);
+                                                            },
+                                                            titleText:
+                                                                'Payment Received?',
+                                                            subText:
+                                                                'Are you revieved the payment?');
+                                                  },
+                                                  child: const Text(
+                                                    'Payment Recieved?',
+                                                    style: TextStyle(
+                                                        color: BColors.darkblue,
+                                                        fontSize: 13,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline),
+                                                  ),
+                                                )
+                                              : const Gap(0)
                                         ],
                                       ),
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'User Status : ',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontSize: 15),
-                                        children: [
-                                          TextSpan(
-                                            text: ordersProvider
-                                                        .onProcessOrderList[
-                                                            index]
-                                                        .isUserAccepted ==
-                                                    false
-                                                ? 'Pending'
-                                                : 'Accepted',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(
-                                                    fontSize: 15,
-                                                    color: ordersProvider
-                                                                .onProcessOrderList[
-                                                                    index]
-                                                                .isUserAccepted ==
-                                                            false
-                                                        ? BColors.pendingColor
-                                                        : BColors.green),
-                                          )
-                                        ],
+                                      const Gap(5),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'User Status : ',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontSize: 14),
+                                          children: [
+                                            TextSpan(
+                                              text: ordersProvider
+                                                          .onProcessOrderList[
+                                                              index]
+                                                          .isUserAccepted ==
+                                                      false
+                                                  ? 'Pending'
+                                                  : 'Accepted',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .copyWith(
+                                                      fontSize: 14,
+                                                      color: ordersProvider
+                                                                  .onProcessOrderList[
+                                                                      index]
+                                                                  .isUserAccepted ==
+                                                              false
+                                                          ? BColors.pendingColor
+                                                          : BColors.green),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                             const Gap(8),
                             /* ----------------------------- COMPLETE BUTTON ---------------------------- */
-                            //TODO CHECK PAYMENT STATUS
+
                             ButtonWidget(
                               buttonHeight: 42,
                               buttonWidth: double.infinity,
@@ -562,17 +619,39 @@ class _OnProcessState extends State<OnProcess> {
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (ordersProvider
                                         .onProcessOrderList[index].resultUrl ==
                                     null) {
                                   CustomToast.errorToast(
                                       text: 'Please upload the result');
+                                  return;
+                                }
+
+                                if (ordersProvider.onProcessOrderList[index]
+                                        .isUserAccepted ==
+                                    false) {
+                                  CustomToast.errorToast(
+                                      text: 'User not accepted the order!');
+                                  return;
+                                }
+                                if (ordersProvider.onProcessOrderList[index]
+                                        .paymentStatus ==
+                                    0) {
+                                  CustomToast.errorToast(
+                                      text: 'Payment is Pending');
                                 } else {
-                                  ordersProvider.updateOrderStatus(
+                                  LoadingLottie.showLoading(
+                                      context: context, text: 'Loading...');
+                                  await ordersProvider.updateOrderStatus(
+                                      fcmtoken: ordersProvider
+                                          .onProcessOrderList[index]
+                                          .userDetails!
+                                          .fcmToken!,
                                       orderId: ordersProvider
                                           .onProcessOrderList[index].id!,
                                       orderStatus: 2);
+                                  Navigator.pop(context);
                                 }
                               },
                             )

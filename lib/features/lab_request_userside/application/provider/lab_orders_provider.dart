@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:healthy_cart_laboratory/core/custom/toast/toast.dart';
+import 'package:healthy_cart_laboratory/core/services/sent_fcm_message.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/domain/facade/i_lab_orders_facade.dart';
 import 'package:healthy_cart_laboratory/features/lab_request_userside/domain/models/lab_orders_model.dart';
 import 'package:injectable/injectable.dart';
@@ -174,6 +175,7 @@ class LabOrdersProvider with ChangeNotifier {
   Future<void> updateOrderStatus(
       {required String orderId,
       required int orderStatus,
+      required String fcmtoken,
       num? finalAmount,
       num? currentAmount,
       String? rejectReason}) async {
@@ -190,6 +192,24 @@ class LabOrdersProvider with ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }, (success) {
+      if (orderStatus == 3) {
+        sendFcmMessage(
+            token: fcmtoken,
+            body:
+                'Your booking is rejected by laboratory, Click to check details!!',
+            title: 'Booking Rejected!!');
+      } else if (orderStatus == 1) {
+        sendFcmMessage(
+            token: fcmtoken,
+            body:
+                'Your booking is approved by laboratory, Please check the details and complete payment!!',
+            title: 'Booking Approved!!');
+      } else if (orderStatus == 2) {
+        sendFcmMessage(
+            token: fcmtoken,
+            body: 'Your lab test is completed, Click to download the result',
+            title: 'Lab Test Completed!!');
+      }
       CustomToast.sucessToast(text: success);
       isLoading = false;
       notifyListeners();
@@ -305,6 +325,19 @@ class LabOrdersProvider with ChangeNotifier {
       CustomToast.sucessToast(text: success);
       pdfFile = null;
       pdfUrl = null;
+    });
+    notifyListeners();
+  }
+
+  /* --------------- UPDATE PAYMENT STATUS WHEN PAYMENT RECEIVED -------------- */
+
+  Future<void> updatePaymentStatus({required String orderId}) async {
+    final result = await ilabOrdersFacade.updatePaymentStatus(orderId: orderId);
+    result.fold((err) {
+      CustomToast.errorToast(text: 'Order status update failed');
+      log('ERROR updatePaymentStatus :: ${err.errMsg}');
+    }, (success) {
+      CustomToast.sucessToast(text: success);
     });
     notifyListeners();
   }

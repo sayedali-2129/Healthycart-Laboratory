@@ -86,19 +86,23 @@ class AddressCard extends StatelessWidget {
                     ),
                   );
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(6),
-                    child: Text(
-                      'Set Door Step Charge',
-                      style: TextStyle(
-                          color: BColors.black,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600),
+                child: Material(
+                  borderRadius: BorderRadius.circular(8),
+                  elevation: 4,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        'Set Door Step Charge',
+                        style: TextStyle(
+                            color: BColors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
                   ),
                 ),

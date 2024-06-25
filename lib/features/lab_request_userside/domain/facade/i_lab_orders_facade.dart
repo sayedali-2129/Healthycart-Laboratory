@@ -33,6 +33,7 @@ abstract class ILabOrdersFacade {
   });
   FutureResult<String> uploadPdfReport(
       {required String orderId, required String pdfUrl});
+  FutureResult<String> updatePaymentStatus({required String orderId});
 
   void clearDataRejected();
   void clearDataCompleted();

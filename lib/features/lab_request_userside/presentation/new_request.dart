@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:healthy_cart_laboratory/core/custom/confirm_alertbox/confirm_delete_widget.dart';
 import 'package:healthy_cart_laboratory/core/custom/custom_button_n_search/button_widget.dart';
+import 'package:healthy_cart_laboratory/core/custom/image_viewer.dart';
 import 'package:healthy_cart_laboratory/core/custom/lottie/loading_indicater.dart';
 import 'package:healthy_cart_laboratory/core/custom/no_data_widget.dart';
 import 'package:healthy_cart_laboratory/core/custom/toast/toast.dart';
@@ -132,6 +133,7 @@ class _NewRequestState extends State<NewRequest> {
                               const Gap(8),
                               /* ------------------------------ USER DETAILS ------------------------------ */
                               UserDetailsContainer(
+                                index: index,
                                 userName: ordersProvider.newOrderList[index]
                                         .userDetails!.userName ??
                                     'No',
@@ -173,11 +175,7 @@ class _NewRequestState extends State<NewRequest> {
                                           leftText: 'Test Mode',
                                           rightText: ordersProvider
                                               .newOrderList[index].testMode!),
-                                      const Gap(5),
-                                      const DetailsTexts(
-                                          leftText: 'Payment',
-                                          rightText: 'Cash On Delivery'),
-                                      const Gap(5),
+                                      const Gap(10),
                                       DetailsTexts(
                                           leftText: 'Test Amount',
                                           rightText:
@@ -375,6 +373,10 @@ class _NewRequestState extends State<NewRequest> {
                                               } else {
                                                 ordersProvider
                                                     .updateOrderStatus(
+                                                  fcmtoken: ordersProvider
+                                                      .newOrderList[index]
+                                                      .userDetails!
+                                                      .fcmToken!,
                                                   orderId: ordersProvider
                                                       .newOrderList[index].id!,
                                                   orderStatus: 3,
@@ -429,6 +431,12 @@ class _NewRequestState extends State<NewRequest> {
                                                 confirmButtonTap: () {
                                                   ordersProvider
                                                       .updateOrderStatus(
+                                                          fcmtoken:
+                                                              ordersProvider
+                                                                  .newOrderList[
+                                                                      index]
+                                                                  .userDetails!
+                                                                  .fcmToken!,
                                                           currentAmount:
                                                               ordersProvider
                                                                   .newOrderList[
@@ -526,12 +534,14 @@ class UserDetailsContainer extends StatelessWidget {
     required this.phoneNumber,
     required this.gender,
     this.onTap,
+    required this.index,
   });
   final String userName;
   final String age;
   final String phoneNumber;
   final String gender;
   final void Function()? onTap;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -590,18 +600,57 @@ class UserDetailsContainer extends StatelessWidget {
                 //                 )))),
                 //                 ),
                 // const Gap(8),
-                PhysicalModel(
-                    elevation: 2,
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    child: SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Center(
-                            child: IconButton(
-                                onPressed: onTap,
-                                icon: const Icon(Icons.phone,
-                                    size: 24, color: Colors.blue))))),
+
+                /* ---------------------------- VIEW PRESCRIPTION --------------------------- */
+                Consumer<LabOrdersProvider>(builder: (context, provider, _) {
+                  return provider.newOrderList[index].prescription == null
+                      ? const Gap(0)
+                      : Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              PhysicalModel(
+                                  elevation: 2,
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: SizedBox(
+                                      width: 40,
+                                      height: 40,
+                                      child: Center(
+                                          child: IconButton(
+                                              onPressed: onTap,
+                                              icon: const Icon(Icons.phone,
+                                                  size: 24,
+                                                  color: Colors.blue))))),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ImageView(
+                                              imageUrl: provider
+                                                  .newOrderList[index]
+                                                  .prescription!)));
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: BColors.darkblue,
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Text(
+                                      'View Prescription',
+                                      style: TextStyle(
+                                          color: BColors.white, fontSize: 12),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                }),
               ],
             ),
           ],

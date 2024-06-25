@@ -26,31 +26,32 @@ class LabOrdersModel {
   String? resultUrl;
   Timestamp? completedAt;
   bool? isUserAccepted;
+  String? prescription;
 
-  LabOrdersModel({
-    this.id,
-    this.labId,
-    this.userId,
-    this.name,
-    this.testMode,
-    this.orderAt,
-    this.userAddress,
-    this.userDetails,
-    this.totalAmount,
-    this.orderStatus,
-    this.paymentStatus,
-    this.paymentMethod,
-    this.selectedTest,
-    this.doorStepCharge,
-    this.finalAmount,
-    this.acceptedAt,
-    this.rejectReason,
-    this.rejectedAt,
-    this.timeSlot,
-    this.resultUrl,
-    this.completedAt,
-    this.isUserAccepted,
-  });
+  LabOrdersModel(
+      {this.id,
+      this.labId,
+      this.userId,
+      this.name,
+      this.testMode,
+      this.orderAt,
+      this.userAddress,
+      this.userDetails,
+      this.totalAmount,
+      this.orderStatus,
+      this.paymentStatus,
+      this.paymentMethod,
+      this.selectedTest,
+      this.doorStepCharge,
+      this.finalAmount,
+      this.acceptedAt,
+      this.rejectReason,
+      this.rejectedAt,
+      this.timeSlot,
+      this.resultUrl,
+      this.completedAt,
+      this.isUserAccepted,
+      this.prescription});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -76,6 +77,7 @@ class LabOrdersModel {
       'resultUrl': resultUrl,
       'completedAt': completedAt,
       'isUserAccepted': isUserAccepted,
+      'prescription': prescription,
     };
   }
 
@@ -120,6 +122,8 @@ class LabOrdersModel {
           map['rejectedAt'] != null ? map['rejectedAt'] as Timestamp : null,
       timeSlot: map['timeSlot'] != null ? map['timeSlot'] as String : null,
       resultUrl: map['resultUrl'] != null ? map['resultUrl'] as String : null,
+      prescription:
+          map['prescription'] != null ? map['prescription'] as String : null,
       completedAt:
           map['completedAt'] != null ? map['completedAt'] as Timestamp : null,
       isUserAccepted:
@@ -150,6 +154,7 @@ class LabOrdersModel {
     String? resultUrl,
     Timestamp? completedAt,
     bool? isUserAccepted,
+    String? prescription,
   }) {
     return LabOrdersModel(
       id: id ?? this.id,
@@ -174,6 +179,7 @@ class LabOrdersModel {
       resultUrl: resultUrl ?? this.resultUrl,
       completedAt: completedAt ?? this.completedAt,
       isUserAccepted: isUserAccepted ?? this.isUserAccepted,
+      prescription: prescription ?? this.prescription,
     );
   }
 }

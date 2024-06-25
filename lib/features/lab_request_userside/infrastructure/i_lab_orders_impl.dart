@@ -293,4 +293,18 @@ class ILabOrdersImpl implements ILabOrdersFacade {
     completedLastDoc = null;
     noMoreDataCompleted = false;
   }
+
+  /* --------------- UPDATE PAYMENT STATUS WHEN PAYMENT RECEIVED -------------- */
+  @override
+  FutureResult<String> updatePaymentStatus({required String orderId}) async {
+    try {
+      await _firestore
+          .collection(FirebaseCollections.userOrdersCollection)
+          .doc(orderId)
+          .update({'paymentStatus': 1});
+      return right('Payment status updated successfully');
+    } catch (e) {
+      return left(MainFailure.generalException(errMsg: e.toString()));
+    }
+  }
 }
