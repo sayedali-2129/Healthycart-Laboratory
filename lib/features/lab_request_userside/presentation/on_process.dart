@@ -641,9 +641,14 @@ class _OnProcessState extends State<OnProcess> {
                                   CustomToast.errorToast(
                                       text: 'Payment is Pending');
                                 } else {
-                                  LoadingLottie.showLoading(
-                                      context: context, text: 'Loading...');
+                                  // LoadingLottie.showLoading(
+                                  //     context: context, text: 'Loading...');
                                   await ordersProvider.updateOrderStatus(
+                                      incrementAmount: ordersProvider
+                                          .onProcessOrderList[index]
+                                          .finalAmount,
+                                      labId: ordersProvider
+                                          .onProcessOrderList[index].labId,
                                       fcmtoken: ordersProvider
                                           .onProcessOrderList[index]
                                           .userDetails!
@@ -651,7 +656,6 @@ class _OnProcessState extends State<OnProcess> {
                                       orderId: ordersProvider
                                           .onProcessOrderList[index].id!,
                                       orderStatus: 2);
-                                  Navigator.pop(context);
                                 }
                               },
                             )

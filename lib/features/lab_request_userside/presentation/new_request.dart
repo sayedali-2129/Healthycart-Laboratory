@@ -39,7 +39,8 @@ class _NewRequestState extends State<NewRequest> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LabOrdersProvider>(builder: (context, ordersProvider, _) {
+    return Consumer2<LabOrdersProvider, AuthenticationProvider>(
+        builder: (context, ordersProvider, authProvider, _) {
       return CustomScrollView(
         slivers: [
           if (ordersProvider.isLoading && ordersProvider.newOrderList.isEmpty)
@@ -373,6 +374,9 @@ class _NewRequestState extends State<NewRequest> {
                                               } else {
                                                 ordersProvider
                                                     .updateOrderStatus(
+                                                  labName: authProvider
+                                                      .labFetchlDataFetched!
+                                                      .laboratoryName,
                                                   fcmtoken: ordersProvider
                                                       .newOrderList[index]
                                                       .userDetails!
@@ -429,30 +433,28 @@ class _NewRequestState extends State<NewRequest> {
                                             .showAlertConfirmBox(
                                                 context: context,
                                                 confirmButtonTap: () {
-                                                  ordersProvider
-                                                      .updateOrderStatus(
-                                                          fcmtoken:
-                                                              ordersProvider
-                                                                  .newOrderList[
-                                                                      index]
-                                                                  .userDetails!
-                                                                  .fcmToken!,
-                                                          currentAmount:
-                                                              ordersProvider
-                                                                  .newOrderList[
-                                                                      index]
-                                                                  .totalAmount!,
-                                                          finalAmount:
-                                                              ordersProvider
-                                                                  .newOrderList[
-                                                                      index]
-                                                                  .finalAmount!,
-                                                          orderId:
-                                                              ordersProvider
-                                                                  .newOrderList[
-                                                                      index]
-                                                                  .id!,
-                                                          orderStatus: 1);
+                                                  ordersProvider.updateOrderStatus(
+                                                      labName: authProvider
+                                                          .labFetchlDataFetched!
+                                                          .laboratoryName,
+                                                      fcmtoken: ordersProvider
+                                                          .newOrderList[index]
+                                                          .userDetails!
+                                                          .fcmToken!,
+                                                      currentAmount:
+                                                          ordersProvider
+                                                              .newOrderList[
+                                                                  index]
+                                                              .totalAmount!,
+                                                      finalAmount:
+                                                          ordersProvider
+                                                              .newOrderList[
+                                                                  index]
+                                                              .finalAmount!,
+                                                      orderId: ordersProvider
+                                                          .newOrderList[index]
+                                                          .id!,
+                                                      orderStatus: 1);
                                                 },
                                                 titleText: 'Confirm',
                                                 subText:

@@ -15,6 +15,8 @@ abstract class ILabOrdersFacade {
       required int orderStatus,
       required num? finalAmount,
       required num? currentAmount,
+      num? amount,
+      String labId,
       String? rejectReason});
   Stream<Either<MainFailure, List<LabOrdersModel>>> getOnProcessOrders({
     required String labId,

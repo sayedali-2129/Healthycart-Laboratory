@@ -125,10 +125,12 @@ class ILabOrdersImpl implements ILabOrdersFacade {
 /* -------------------------------------------------------------------------- */
   @override
   FutureResult<String> updateOrderStatus(
-      {required String orderId,
+      {String? labId,
+      required String orderId,
       required int orderStatus,
       required num? finalAmount,
       required num? currentAmount,
+      num? amount,
       String? rejectReason}) async {
     try {
       /* ------------------------------ ACCEPT ORDER ------------------------------ */
@@ -156,10 +158,20 @@ class ILabOrdersImpl implements ILabOrdersFacade {
         return right('Order Accepted successfully');
         /* ----------------------------- COMPLETE ORDER ----------------------------- */
       } else if (orderStatus == 2) {
-        await _firestore
+        final batch = _firestore.batch();
+
+        final userDoc = _firestore
             .collection(FirebaseCollections.userOrdersCollection)
-            .doc(orderId)
-            .update({'orderStatus': 2, 'completedAt': Timestamp.now()});
+            .doc(orderId);
+        final transactionDoc = _firestore
+            .collection(FirebaseCollections.labTransactions)
+            .doc(labId);
+        batch.update(
+            userDoc, {'orderStatus': 2, 'completedAt': Timestamp.now()});
+        batch.update(transactionDoc,
+            {'totalTransactionAmt': FieldValue.increment(amount!)});
+        await batch.commit();
+
         return right('Order Completed successfully');
         /* ----------------------------- REJECT ORDER ----------------------------- */
       } else if (orderStatus == 3) {
@@ -217,6 +229,8 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   @override
   FutureResult<List<LabOrdersModel>> getCompletedOrders(
       {required String labId}) async {
+    if (noMoreDataCompleted) return right([]);
+
     try {
       Query query = _firestore
           .collection(FirebaseCollections.userOrdersCollection)

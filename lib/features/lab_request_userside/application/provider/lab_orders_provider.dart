@@ -128,6 +128,7 @@ class LabOrdersProvider with ChangeNotifier {
       log('error in getCompletedOrders() :: ${err.errMsg}');
     }, (completedOrders) {
       completedOrderList.addAll(completedOrders);
+      notifyListeners();
     });
     isLoading = false;
     notifyListeners();
@@ -176,12 +177,17 @@ class LabOrdersProvider with ChangeNotifier {
       {required String orderId,
       required int orderStatus,
       required String fcmtoken,
+      String? labName,
+      String? labId,
+      num? incrementAmount,
       num? finalAmount,
       num? currentAmount,
       String? rejectReason}) async {
     isLoading = true;
     notifyListeners();
     final result = await ilabOrdersFacade.updateOrderStatus(
+        amount: incrementAmount,
+        labId: labId ?? '',
         finalAmount: finalAmount,
         orderId: orderId,
         orderStatus: orderStatus,
@@ -196,13 +202,13 @@ class LabOrdersProvider with ChangeNotifier {
         sendFcmMessage(
             token: fcmtoken,
             body:
-                'Your booking is rejected by laboratory, Click to check details!!',
+                'Your booking is rejected by $labName Lab, Click to check details!!',
             title: 'Booking Rejected!!');
       } else if (orderStatus == 1) {
         sendFcmMessage(
             token: fcmtoken,
             body:
-                'Your booking is approved by laboratory, Please check the details and complete payment!!',
+                'Your booking is approved by $labName Lab, Please check the details and complete payment!!',
             title: 'Booking Approved!!');
       } else if (orderStatus == 2) {
         sendFcmMessage(

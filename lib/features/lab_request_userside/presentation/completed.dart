@@ -31,7 +31,7 @@ class _CompletedState extends State<Completed> {
           ..getCompletedOrders(labId: authProvider.labFetchlDataFetched!.id!);
       },
     );
-    ordersProvider.rejectInit(
+    ordersProvider.completeInit(
         scrollController, authProvider.labFetchlDataFetched!.id!);
     super.initState();
   }
@@ -277,7 +277,12 @@ class _CompletedState extends State<Completed> {
                           ),
                         ),
                       );
-                    }))
+                    })),
+          SliverToBoxAdapter(
+              child: (ordersProvider.isLoading == true &&
+                      ordersProvider.completedOrderList.isNotEmpty)
+                  ? const Center(child: LoadingIndicater())
+                  : const Gap(0)),
         ],
       );
     });
