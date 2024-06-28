@@ -4,6 +4,7 @@ import 'package:healthy_cart_laboratory/core/failures/main_failure.dart';
 import 'package:healthy_cart_laboratory/core/general/firebase_collection.dart';
 import 'package:healthy_cart_laboratory/core/general/typdef.dart';
 import 'package:healthy_cart_laboratory/features/laboratory_profile/domain/i_profile_facade.dart';
+import 'package:healthy_cart_laboratory/features/laboratory_profile/domain/models/transfer_transaction_model.dart';
 import 'package:healthy_cart_laboratory/features/tests_screen/domain/models/test_model.dart';
 import 'package:injectable/injectable.dart';
 
@@ -71,5 +72,51 @@ class IProfileImpl implements IProfileFacade {
     } catch (e) {
       return left(MainFailure.generalException(errMsg: e.toString()));
     }
+  }
+
+  DocumentSnapshot<Map<String, dynamic>>? lastDoc;
+  bool noMoreData = false;
+  @override
+  FutureResult<List<TransferTransactionsModel>> getAdminTransactionList(
+      {required String labId}) async {
+    if (noMoreData) return right([]);
+
+    int limit = lastDoc == null ? 15 : 8;
+    try {
+      Query query = _firebaseFirestore
+          .collection(FirebaseCollections.labTransactions)
+          .doc(labId)
+          .collection(FirebaseCollections.laboratoryTransactionSubCollection)
+          .orderBy('dateAndTime', descending: true);
+
+      // if (search != null && search.isNotEmpty) {
+      //   query = query.where('keywords', arrayContains: search.toLowerCase());
+      // }
+      if (lastDoc != null) {
+        query = query.startAfterDocument(lastDoc!);
+      }
+      final result = await query.limit(limit).get();
+
+      if (result.docs.length < limit || result.docs.isEmpty) {
+        noMoreData = true;
+      } else {
+        lastDoc = result.docs.last as DocumentSnapshot<Map<String, dynamic>>;
+      }
+
+      final transactionList = result.docs
+          .map((e) => TransferTransactionsModel.fromMap(
+              e.data() as Map<String, dynamic>))
+          .toList();
+
+      return right(transactionList);
+    } catch (e) {
+      return left(MainFailure.generalException(errMsg: e.toString()));
+    }
+  }
+
+  @override
+  void clearTransactionData() {
+    lastDoc = null;
+    noMoreData = false;
   }
 }

@@ -23,7 +23,7 @@ abstract class ILabOrdersFacade {
   });
   FutureResult<List<LabOrdersModel>> getRejectedOrders({required String labId});
   FutureResult<List<LabOrdersModel>> getCompletedOrders(
-      {required String labId});
+      {required String labId, required int limit});
   FutureResult<String> setTimeSlot(
       {required String orderId, required String dateAndTime});
   FutureResult<File> getPDF();

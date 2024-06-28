@@ -120,10 +120,12 @@ class LabOrdersProvider with ChangeNotifier {
   }
 
   /* -------------------------- GET COMPLETED ORDERS -------------------------- */
-  Future<void> getCompletedOrders({required String labId}) async {
+  Future<void> getCompletedOrders(
+      {required String labId, required int limit}) async {
     isLoading = true;
     notifyListeners();
-    final result = await ilabOrdersFacade.getCompletedOrders(labId: labId);
+    final result =
+        await ilabOrdersFacade.getCompletedOrders(labId: labId, limit: limit);
     result.fold((err) {
       log('error in getCompletedOrders() :: ${err.errMsg}');
     }, (completedOrders) {
@@ -148,13 +150,14 @@ class LabOrdersProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void completeInit(ScrollController scrollController, String labId) {
+  void completeInit(
+      ScrollController scrollController, String labId, int limit) {
     scrollController.addListener(
       () {
         if (scrollController.position.atEdge &&
             scrollController.position.pixels != 0 &&
             isLoading == false) {
-          getCompletedOrders(labId: labId);
+          getCompletedOrders(labId: labId, limit: limit);
         }
       },
     );

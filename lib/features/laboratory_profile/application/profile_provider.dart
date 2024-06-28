@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:healthy_cart_laboratory/core/custom/toast/toast.dart';
 import 'package:healthy_cart_laboratory/features/laboratory_profile/domain/i_profile_facade.dart';
+import 'package:healthy_cart_laboratory/features/laboratory_profile/domain/models/transfer_transaction_model.dart';
 import 'package:healthy_cart_laboratory/features/tests_screen/domain/models/test_model.dart';
 import 'package:injectable/injectable.dart';
 
@@ -12,6 +16,7 @@ class ProfileProvider extends ChangeNotifier {
   final labId = FirebaseAuth.instance.currentUser?.uid;
   List<TestModel> testList = [];
   bool isLabOn = false;
+  bool fetchLoading = false;
 
   void labStatus(bool status) {
     isLabOn = status;
@@ -36,6 +41,39 @@ class ProfileProvider extends ChangeNotifier {
     }, (sucess) {
       CustomToast.sucessToast(text: sucess);
     });
+    notifyListeners();
+  }
+
+  List<TransferTransactionsModel> adminTransactionList = [];
+  Future<void> getAdminTransactions({required String labId}) async {
+    fetchLoading = true;
+    notifyListeners();
+    final result = await iProfileFacade.getAdminTransactionList(labId: labId);
+    result.fold((err) {
+      log('ERROR :;  ${err.errMsg}');
+    }, (succes) {
+      adminTransactionList.addAll(succes);
+    });
+    fetchLoading = false;
+    notifyListeners();
+  }
+
+  void transactionInit(
+      {required ScrollController scrollController, required String labId}) {
+    scrollController.addListener(
+      () {
+        if (scrollController.position.atEdge &&
+            scrollController.position.pixels != 0 &&
+            fetchLoading == false) {
+          getAdminTransactions(labId: labId);
+        }
+      },
+    );
+  }
+
+  void clearTransactionData() {
+    iProfileFacade.clearTransactionData();
+    adminTransactionList = [];
     notifyListeners();
   }
 }

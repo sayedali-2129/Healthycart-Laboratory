@@ -228,7 +228,7 @@ class ILabOrdersImpl implements ILabOrdersFacade {
   /* -------------------------- GET COMPLETED ORDERS -------------------------- */
   @override
   FutureResult<List<LabOrdersModel>> getCompletedOrders(
-      {required String labId}) async {
+      {required String labId, required int limit}) async {
     if (noMoreDataCompleted) return right([]);
 
     try {
@@ -241,8 +241,8 @@ class ILabOrdersImpl implements ILabOrdersFacade {
       if (completedLastDoc != null) {
         query = query.startAfterDocument(completedLastDoc!);
       }
-      final snapshot = await query.limit(5).get();
-      if (snapshot.docs.length < 5 || snapshot.docs.isEmpty) {
+      final snapshot = await query.limit(limit).get();
+      if (snapshot.docs.length < limit || snapshot.docs.isEmpty) {
         noMoreDataCompleted = true;
       } else {
         completedLastDoc =

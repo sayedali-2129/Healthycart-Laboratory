@@ -28,11 +28,12 @@ class _CompletedState extends State<Completed> {
       (_) {
         ordersProvider
           ..cleatDataCompleted()
-          ..getCompletedOrders(labId: authProvider.labFetchlDataFetched!.id!);
+          ..getCompletedOrders(
+              labId: authProvider.labFetchlDataFetched!.id!, limit: 5);
       },
     );
     ordersProvider.completeInit(
-        scrollController, authProvider.labFetchlDataFetched!.id!);
+        scrollController, authProvider.labFetchlDataFetched!.id!, 5);
     super.initState();
   }
 
