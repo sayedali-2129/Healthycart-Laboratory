@@ -63,7 +63,7 @@ class _CompletedState extends State<Completed> {
                     itemBuilder: (context, index) {
                       final completedOrders =
                           ordersProvider.completedOrderList[index];
-                      final acceptedAt = completedOrders.acceptedAt!.toDate();
+                      final acceptedAt = completedOrders.completedAt!.toDate();
 
                       final formattedDate =
                           DateFormat('dd/MM/yyyy').format(acceptedAt);
